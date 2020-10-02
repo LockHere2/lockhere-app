@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   }
 });
 
-class SignupPage extends Component {
+class SignupScreen extends Component {
 
   state = {
     isVisible: false
@@ -162,4 +162,4 @@ const mapStateToProps = (props) => {
   return props;
 }
 
-export default connect(mapStateToProps, { signup })(SignupPage);
+export default connect(mapStateToProps, { signup })(SignupScreen);

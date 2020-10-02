@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   }
 });
 
-class LoginPage extends Component {
+class LoginScreen extends Component {
 
   state = {
     email: '',
@@ -113,4 +113,4 @@ const mapStateToProps = (props) => {
   return props;
 }
 
-export default connect(mapStateToProps, { login })(LoginPage);
+export default connect(mapStateToProps, { login })(LoginScreen);

@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   }
 });
 
-class MapPage extends Component {
+class MapScreen extends Component {
 
   state = {
     mapLoaded: false,
@@ -231,4 +231,4 @@ const mapStateToProps = (props) => {
   return props;
 }
 
-export default connect(mapStateToProps, { fetchNearbyLockers, fetchAddresses, cleanFetchAddress })(MapPage);
+export default connect(mapStateToProps, { fetchNearbyLockers, fetchAddresses, cleanFetchAddress })(MapScreen);

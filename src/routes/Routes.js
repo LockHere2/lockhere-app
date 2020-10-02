@@ -2,10 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import HomePage from '../pages/HomePage';
-import LoginPage from '../pages/LoginPage';
-import SignupPage from '../pages/SignupPage';
-import LockersPage from '../pages/LockersPage';
+import HomeScreen from '../screens/HomePage';
+import LoginScreen from '../screens/LoginPage';
+import SignupScreen from '../screens/SignupPage';
+import LockersScreen from '../screens/LockersPage';
 
 const Stack = createStackNavigator();
 
@@ -15,22 +15,22 @@ function Routes() {
             <Stack.Navigator initialRouteName="Login">
                 <Stack.Screen
                     name="Login"
-                    component={LoginPage}
+                    component={LoginScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
                     name="Home"
-                    component={HomePage}
+                    component={HomeScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
                     name="Signup"
-                    component={SignupPage}
+                    component={SignupScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
                     name="Lockers"
-                    component={LockersPage}
+                    component={LockersScreen}
                     options={{ title: 'Seleção de armário' }}
                 />
             </Stack.Navigator>
