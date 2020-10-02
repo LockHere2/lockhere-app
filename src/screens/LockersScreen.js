@@ -78,7 +78,7 @@ class LockersScreen extends Component {
     return (
       <ScrollView style={styles.container}>
          {this.renderAddress()}
-        <Text style={styles.lockerTitle}>{'Armários disponíveis'}</Text>
+        <Text style={styles.lockerTitle}>Armários disponíveis</Text>
         <View style={styles.lockerButtonView}>
           {this.renderLockers()}
         </View>
