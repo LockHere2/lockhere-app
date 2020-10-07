@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { Icon, SearchBar, ListItem, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import MapView from 'react-native-maps';
 
 import { fetchNearbyLockers } from '../store/actions/map';
 import { fetchAddresses, cleanFetchAddress } from '../store/actions/address';
+
+import LoadingComponent from '../components/LoadingComponent';
 
 const latitudeDelta = 0.0922;
 const longitudeDelta = 0.0421;
@@ -170,11 +172,7 @@ class MapScreen extends Component {
   render() {
     const { position, mapLoaded } = this.state;
     if (!mapLoaded) {
-      return (
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <ActivityIndicator size='large' />
-        </View>
-      );
+      return <LoadingComponent />;
     }
 
     return (

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import { Input, Button } from 'react-native-elements';
+import { Input } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 
 import { signup } from '../store/actions/user';
 import PopupComponent from '../components/PopupComponent';
+import Button from '../components/ButtonComponent';
 import OAuth from '../model/OAuth';
 
 const styles = StyleSheet.create({
@@ -32,7 +33,8 @@ const styles = StyleSheet.create({
 class SignupScreen extends Component {
 
   state = {
-    isVisible: false
+    isVisible: false,
+    born: moment().format('DD.MM.YYYY')
   };
 
   async onSubmit() {
@@ -73,10 +75,6 @@ class SignupScreen extends Component {
   }
 
   datePicker() {
-    if (!this.state.born) {
-      this.setState({ born: moment().format('DD.MM.YYYY') });
-    }
-
     return <DatePicker
       style={{ flex: 1 }}
       date={this.state.born}

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Input, Button, Text } from 'react-native-elements';
+import { Input, Text } from 'react-native-elements';
 import { connect } from 'react-redux';
 
 import { login } from '../store/actions/user';
 import PopupComponent from '../components/PopupComponent';
+import Button from '../components/ButtonComponent';
 import OAuth from '../model/OAuth';
 
 const styles = StyleSheet.create({
