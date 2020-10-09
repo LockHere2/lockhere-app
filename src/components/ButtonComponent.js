@@ -16,16 +16,20 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.27,
         shadowRadius: 4.65,
         elevation: 2,
+    },
+    center: {
+        alignSelf: 'center'
     }
 });
 
-export default ({ title, disabled = false, containerStyle, buttonStyle, shadow = false, onPress }) => {
+export default ({ title, disabled = false, center = false, shadow = false, containerStyle, buttonStyle, onPress }) => {
     const shadowStyle = shadow ? styles.shadow : {};
+    const centerStyle = center ? styles.center : {};
 
     return <Button 
         disabled={disabled}
         containerStyle={{ ...shadowStyle, ...containerStyle }} 
-        buttonStyle={{ ...styles.button, ...buttonStyle }} 
+        buttonStyle={{ ...styles.button, ...buttonStyle, ...centerStyle }} 
         title={title}
         onPress={onPress} />
 };

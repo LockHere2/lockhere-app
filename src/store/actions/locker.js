@@ -3,6 +3,7 @@ import axios from 'axios';
 import env from '../../env';
 import { FETCH_LOCKER_GROUP, FETCH_LOCKER_GROUP_ERROR, LOCKER_RESERVATION, LOADING } from './actionTypes';
 import OAuth from '../../model/OAuth';
+import { diff } from '../../utils/DateUtils';
 
 export const fetchLockersByGroupId = (id) => {
 
@@ -35,4 +36,11 @@ export const handleReservation = (reservation) => {
         type: LOCKER_RESERVATION,
         payload: reservation
     }
+}
+
+export const updateReservationPrice = (reservation) => {
+    const { startDate, endDate, hour_price } = reservation;
+    const minutes = diff(startDate, endDate, 'minutes');
+    reservation.price = +((minutes / 60) * hour_price).toFixed(2);
+    return handleReservation(reservation);
 }

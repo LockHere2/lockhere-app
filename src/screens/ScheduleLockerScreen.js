@@ -4,10 +4,12 @@ import { StyleSheet, View } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 
 import { handleReservation } from '../store/actions/locker';
+import LockerValidator from '../validators/LockerValidator';
 
 import { Bottom } from '../components/PositionComponent';
 import DatePicker from '../components/DatePickerComponent';
 import Button from '../components/ButtonComponent';
+import PopupComponent from '../components/PopupComponent';
 
 const styles = StyleSheet.create({
     container: {
@@ -18,8 +20,7 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     button: {
-        width: 250,
-        alignSelf: 'center'
+        width: 250
     },
     text: {
         textAlign: 'center'
@@ -30,13 +31,43 @@ const styles = StyleSheet.create({
 })
 
 class ScheduleLockerScreen extends Component {
+
+    state = {
+        errorMessage: '',
+        isVisible: false
+    }
+
+    onPress() {
+        const { reservation } = this.props.locker;
+        const { startDate, endDate } = reservation;
+
+        const { isValid, errors } = LockerValidator.isReservationDateValid(startDate, endDate);
+
+        if (isValid) {
+            this.props.navigation.navigate('ResumeScheduleLockerScreen');
+        } else {
+            this.setState({ errorMessage: errors.message, isVisible: true });
+        }
+    }
+
+    popupErroMessage() {
+        const { errorMessage, isVisible } = this.state;
+
+        return (<PopupComponent
+            message={errorMessage}
+            isVisible={isVisible}
+            onBackdropPress={() => this.setState({ isVisible: false })}
+            onPress={() => this.setState({ isVisible: false })}
+        />);
+    }
+
     datePicker({ field }) {
         const { reservation } = this.props.locker;
-        
-        return <DatePicker 
+
+        return <DatePicker
             date={reservation[field]}
-            mode='datetime' 
-            format='DD.MM.YYYY HH:mm' 
+            mode='datetime'
+            format='DD.MM.YYYY HH:mm'
             onDateChange={(date) => {
                 reservation[field] = date;
                 this.props.handleReservation(reservation);
@@ -46,6 +77,7 @@ class ScheduleLockerScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
+                {this.popupErroMessage()}
                 <Text h4 style={styles.text}>Agende seu horario!</Text>
                 <View style={styles.inputView}>
                     <Input
@@ -63,7 +95,7 @@ class ScheduleLockerScreen extends Component {
                         InputComponent={this.datePicker.bind(this)} />
                 </View>
                 <Bottom>
-                    <Button title='Proximo' buttonStyle={styles.button} />
+                    <Button center title='Proximo' buttonStyle={styles.button} onPress={() => this.onPress()} />
                 </Bottom>
             </View>
         )
