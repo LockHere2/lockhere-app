@@ -8,6 +8,7 @@ import SignupScreen from '../screens/SignupScreen';
 import LockersScreen from '../screens/LockersScreen';
 import ScheduleLockerScreen from '../screens/ScheduleLockerScreen';
 import ResumeScheduleLockerScreen from '../screens/ResumeScheduleLockerScreen';
+import OpenLockerScreen from '../screens/OpenLockerScreen';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,11 @@ function Routes() {
                     name="ResumeScheduleLockerScreen"
                     component={ResumeScheduleLockerScreen}
                     options={{ title: 'Reservar um armário' }}
+                />
+                <Stack.Screen
+                    name="OpenLockerScreen"
+                    component={OpenLockerScreen}
+                    options={{ title: 'Armário aberto' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>

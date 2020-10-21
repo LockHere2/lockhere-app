@@ -6,6 +6,7 @@ export default class UserValidator {
     static CPF_REGEXP = /^\d{11}$/;
     static PASSWORD_MIN_LENGTH = 6;
     static PASSWORD_MAX_LENGTH = 15;
+    static MIN_AGE = 18 * 365;
 
     static isValidEmail(email) {
         return this.EMAIL_REGEXP.test(email);
@@ -49,7 +50,11 @@ export default class UserValidator {
             errors.cpf = 'Cpf inválido';
         }
 
-        if (!moment(user.born, 'DD.MM.YYYY').isValid()) {
+        if (!moment(user.born, 'DD/MM/YYYY', true).isValid()) {
+            errors.born = 'Data de nascimento inválida';
+        }
+
+        if (moment(user.born, 'DD/MM/YYYY', true).diff(moment(new Date(), 'DD/MM/YYYY'), 'days') >= -this.MIN_AGE) {
             errors.born = 'Data de nascimento inválida';
         }
 

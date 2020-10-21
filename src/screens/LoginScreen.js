@@ -86,13 +86,16 @@ class LoginScreen extends Component {
           testID="email_input"
           placeholder='email@exemplo.com'
           label="Email"
+          errorProps={{ testID: 'email_error' }}
           errorMessage={this.errorMessage('email')}
           errorStyle={styles.error}
           labelStyle={styles.label}
           onChangeText={(email) => this.setState({ email })} />
         <Input
           testID="password_input"
-          placeholder="******" label="Senha"
+          placeholder="******" 
+          label="Senha"
+          errorProps={{ testID: 'password_error' }}
           errorMessage={this.errorMessage('password')}
           errorStyle={styles.error}
           labelStyle={styles.label}
@@ -101,9 +104,17 @@ class LoginScreen extends Component {
         {this.popupErroMessage()}
         <Text onPress={() => { }} style={{ alignSelf: 'flex-end' }}>Esqueci minha senha</Text>
         <View style={{ marginTop: 15 }}>
-          <Button buttonStyle={styles.button} title="Entrar" onPress={() => this.onLogin()} />
+          <Button 
+            testID='login_button'
+            buttonStyle={styles.button} 
+            title="Entrar" 
+            onPress={() => this.onLogin()} />
           <Text h4 style={{ alignSelf: 'center' }}>OU</Text>
-          <Button buttonStyle={styles.button} title="Cadastre-se" onPress={() => this.props.navigation.navigate('Signup')} />
+          <Button 
+            testID='signup_button'
+            buttonStyle={styles.button} 
+            title="Cadastre-se" 
+            onPress={() => this.props.navigation.navigate('Signup')} />
         </View>
       </ScrollView>
     )

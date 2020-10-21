@@ -63,6 +63,12 @@ class LockersScreen extends Component {
     return lockers.find(({ number }) => number === selectedLocker);
   }
 
+  onOpenLocker() {
+    const locker = this.getSelectedLocker();
+    this.props.handleReservation(locker);
+    this.props.navigation.navigate('OpenLockerScreen', { action: 'open' });
+  }
+
   onScheduleLocker() {
     const locker = this.getSelectedLocker();
     this.props.handleReservation(locker);
