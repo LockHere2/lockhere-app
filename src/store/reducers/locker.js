@@ -1,4 +1,11 @@
-import { FETCH_LOCKER_GROUP, FETCH_LOCKER_GROUP_ERROR, LOCKER_RESERVATION, LOADING } from '../actions/actionTypes';
+import { 
+    FETCH_LOCKER_GROUP, 
+    FETCH_LOCKER_GROUP_ERROR, 
+    LOCKER_RESERVATION, 
+    FETCH_RESERVATIONS,
+    FETCH_RESERVATIONS_ERROR,
+    LOADING 
+} from '../actions/actionTypes';
 
 const initialState = { 
     lockerGroup: { address: {}, lockers: [] }, 
@@ -13,6 +20,10 @@ const locker = (state = initialState, action) => {
             return { message: action.payload, ...initialState };
         case LOCKER_RESERVATION:
             return { ...state, reservation: action.payload };
+        case FETCH_RESERVATIONS:
+            return { ...state, loading: false, reservations: action.payload };
+        case FETCH_RESERVATIONS_ERROR:
+            return { message: action.payload, loading: false, ...initialState };
         case LOADING:
             return { loading: true, ...state };
         default:

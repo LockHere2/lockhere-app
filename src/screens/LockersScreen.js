@@ -98,9 +98,10 @@ class LockersScreen extends Component {
     const { lockers } = this.props.locker.lockerGroup;
     const { selectedLocker } = this.state;
 
-    return lockers.map(({ number }, i) => (
+    return lockers.map(({ number, available }, i) => (
       <Button
         key={i}
+        disabled={!available}
         titleStyle={{ color: selectedLocker !== number ? 'black' : 'white' }}
         buttonStyle={{ ...styles.lockerButton, backgroundColor: selectedLocker !== number ? '#C4C4C4' : 'black' }}
         title={number.toString()}
@@ -142,7 +143,8 @@ class LockersScreen extends Component {
             shadow 
             disabled={disabled}
             buttonStyle={styles.button} 
-            title='Abrir locker' />
+            title='Abrir locker'
+            onPress={() => this.onOpenLocker()} />
         </Bottom>
       </>
     );

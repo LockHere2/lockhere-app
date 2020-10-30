@@ -1,7 +1,16 @@
 import axios from 'axios';
 
 import env from '../../env';
-import { FETCH_LOCKER_GROUP, FETCH_LOCKER_GROUP_ERROR, LOCKER_RESERVATION, LOADING } from './actionTypes';
+import { 
+    FETCH_LOCKER_GROUP, 
+    FETCH_LOCKER_GROUP_ERROR, 
+    LOCKER_RESERVATION, 
+    CREATE_RESERVATION, 
+    CREATE_RESERVATION_ERROR, 
+    FETCH_RESERVATIONS,
+    FETCH_RESERVATIONS_ERROR,
+    LOADING 
+} from './actionTypes';
 import OAuth from '../../model/OAuth';
 import { diff } from '../../utils/DateUtils';
 
@@ -29,6 +38,54 @@ export const fetchLockersByGroupId = (id) => {
             });
         }
     };
+}
+
+export const createReservation = (reservation) => {
+
+    return async dispatch => {
+        dispatch({
+            type: LOADING
+        });
+    
+        try {
+            await axios.post(`${env.apiUrl}/locker/reserve`,
+                reservation,
+                { headers: OAuth.headers });
+    
+            return dispatch({
+                type: CREATE_RESERVATION
+            });
+        } catch (err) {
+            const { data } = err.response;
+            return dispatch({
+                type: CREATE_RESERVATION_ERROR,
+                payload: data.message
+            });
+        }
+    }
+}
+
+export const fetchUserReservations = () => {
+    return async dispatch => {
+        dispatch({
+            type: LOADING
+        });
+
+        try {
+            const { data } = await axios.get(`${env.apiUrl}/locker/reserve`, { headers: OAuth.headers });
+
+            return dispatch({
+                type: FETCH_RESERVATIONS,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+            return dispatch({
+                type: FETCH_RESERVATIONS_ERROR,
+                payload: data.message
+            });
+        }
+    }
 }
 
 export const handleReservation = (reservation) => {

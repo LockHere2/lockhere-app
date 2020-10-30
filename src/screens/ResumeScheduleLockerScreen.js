@@ -34,7 +34,6 @@ class ResumeScheduleLockerScreen extends Component {
         const { reservation } = this.props.locker;
         const { hour_price, price } = reservation;
         const data = [
-            //{ text: 'Tempo agendado', value: size },
             { text: 'Valor por hora', value: hour_price, valueType: 'currency' },
             { text: 'Total', value: price, valueType: 'currency' }
         ];
@@ -58,7 +57,6 @@ class ResumeScheduleLockerScreen extends Component {
 }
 
 const mapStateToProps = ({ locker }) => {
-    console.log(locker)
     return { locker };
 }
 

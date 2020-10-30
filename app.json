@@ -27,7 +27,8 @@
     },
     "android": {
       "package": "com.br.lockerapp",
-      "versionCode": 1
+      "versionCode": 1,
+      "softwareKeyboardLayoutMode": "pan"
     },
     "entryPoint": "node_modules/expo/AppEntry.js"
   },

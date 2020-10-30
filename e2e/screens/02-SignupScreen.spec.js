@@ -49,7 +49,7 @@ describe('SignupScreen', () => {
             errorElementId: 'signup_date_error', 
             errorMessage: 'Data de nascimento inválida',
             inputElementId: 'signup_date_input',
-            inputValue: '10/11/2019'
+            inputValue: '10/11/2001'
         });
     });
 
