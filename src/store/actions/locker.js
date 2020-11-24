@@ -9,6 +9,8 @@ import {
     CREATE_RESERVATION_ERROR, 
     FETCH_RESERVATIONS,
     FETCH_RESERVATIONS_ERROR,
+    UPDATE_RESERVATION_STATUS,
+    UPDATE_RESERVATION_STATUS_ERROR,
     LOADING 
 } from './actionTypes';
 import OAuth from '../../model/OAuth';
@@ -65,14 +67,14 @@ export const createReservation = (reservation) => {
     }
 }
 
-export const fetchUserReservations = () => {
+export const fetchUserReservations = (params = { orderBy, status, direction}) => {
     return async dispatch => {
         dispatch({
             type: LOADING
         });
 
         try {
-            const { data } = await axios.get(`${env.apiUrl}/locker/reserve`, { headers: OAuth.headers });
+            const { data } = await axios.get(`${env.apiUrl}/locker/reserve`, { params, headers: OAuth.headers });
 
             return dispatch({
                 type: FETCH_RESERVATIONS,
@@ -82,6 +84,28 @@ export const fetchUserReservations = () => {
             const { data } = err.response;
             return dispatch({
                 type: FETCH_RESERVATIONS_ERROR,
+                payload: data.message
+            });
+        }
+    }
+}
+
+export const updateUserReservationStatus = (id, status) => {
+    return async dispatch => {
+        dispatch({
+            type: LOADING
+        });
+
+        try {
+            await axios.put(`${env.apiUrl}/locker/reserve/${id}/status/${status}`, null, { headers: OAuth.headers });
+
+            return dispatch({
+                type: UPDATE_RESERVATION_STATUS
+            });
+        } catch (err) {
+            const { data } = err.response;
+            return dispatch({
+                type: UPDATE_RESERVATION_STATUS_ERROR,
                 payload: data.message
             });
         }

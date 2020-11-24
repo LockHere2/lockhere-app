@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
 
-import { handleReservation, createReservation } from '../store/actions/locker';
+import { updateUserReservationStatus } from '../store/actions/locker';
 
 import { Bottom } from '../components/PositionComponent';
 import Button from '../components/ButtonComponent';
@@ -34,33 +34,25 @@ const styles = StyleSheet.create({
     }
 });
 
-class OpenLockerScreen extends Component {
+class OpenScheduledLockerScreen extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { action: props.route.params.action };
-    }
-
-    componentDidMount() {
-        const { reservation } = this.props.locker;
-        reservation.price = 0;
-        delete reservation.endDate;
-        this.props.handleReservation(reservation);
+        const { action, id } = props.route.params;
+        this.state = { action, id };
     }
 
     async onClick() {
-        const { reservation } = this.props.locker;
-        reservation.startDate = new Date();
-        reservation.status = ReserveStatusEnum.INUSE;
-        await this.props.createReservation(reservation);
+        const { id } = this.state;
+        await this.props.updateUserReservationStatus(id, ReserveStatusEnum.INUSE);
         this.setState({ action: 'close' });
     }
 
     onRenderClose() {
         return (
             <>
-                <Text h4 style={styles.textCenter}>Parabéns, seu armário foi trancado</Text>
-                <Text h4 style={{ ...styles.textCenter, marginTop: 200 }}>A contagem do tempo irá começar após 5 minutos.</Text>
+                <Text h4 style={styles.textCenter}>Parabéns, seu armário foi trancado!</Text>
+                <Text h4 style={styles.textCenter}>Obrigado por usar nossos serviços.</Text>
                 <Bottom>
                     <Button
                         center
@@ -73,22 +65,12 @@ class OpenLockerScreen extends Component {
     }
 
     onRenderOpen() {
-        const { lockerGroup, reservation } = this.props.locker;
-        const { address } = lockerGroup;
         return (
             <>
-                <Text h4 style={styles.addressTitle}>{`${address.street}, ${address.number}`}</Text>
-                <Text h4 style={styles.textCenter}>Armário selecionado</Text>
-                <Button
-                    center
-                    title={reservation.number.toString()}
-                    titleStyle={{ color: 'white' }}
-                    buttonStyle={styles.lockerButtonStyle}
-                />
                 <Text
                     h4
                     style={{ ...styles.addressTitle, textAlign: 'center', marginTop: 50 }}>
-                    Coloque seus objetos no armário número {reservation.number} e depois feche-o!
+                    Coloque seus objetos no armário e depois feche-o!
                 </Text>
                 <Bottom>
                     <Button
@@ -111,8 +93,8 @@ class OpenLockerScreen extends Component {
     }
 }
 
-const mapStateToProps = ({ locker }) => {
-    return { locker };
+const mapStateToProps = (props) => {
+    return props;
 }
 
-export default connect(mapStateToProps, { handleReservation, createReservation })(OpenLockerScreen);
+export default connect(mapStateToProps, { updateUserReservationStatus })(OpenScheduledLockerScreen);
