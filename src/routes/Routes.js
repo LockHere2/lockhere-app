@@ -10,7 +10,7 @@ import ScheduleLockerScreen from '../screens/ScheduleLockerScreen';
 import ResumeScheduleLockerScreen from '../screens/ResumeScheduleLockerScreen';
 import OpenLockerScreen from '../screens/OpenLockerScreen';
 import OpenScheduledLocker from '../screens/OpenScheduledLocker';
-import ReserveScreen from '../screens/ReserveScreen';
+import UpdateProfileScreen from '../screens/UpdateProfileScreen';
 
 const Stack = createStackNavigator();
 
@@ -57,6 +57,11 @@ function Routes() {
                     name="OpenScheduledLocker"
                     component={OpenScheduledLocker}
                     options={{ title: 'Armário aberto' }}
+                />
+                <Stack.Screen
+                    name="UpdateProfileScreen"
+                    component={UpdateProfileScreen}
+                    options={{ headerShown: false }}
                 />
             </Stack.Navigator>
         </NavigationContainer>

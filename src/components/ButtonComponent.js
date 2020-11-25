@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ({ testID, title, disabled = false, center = false, shadow = false, containerStyle, buttonStyle, onPress }) => {
+export default ({ testID, title, icon, disabled = false, center = false, shadow = false, containerStyle, buttonStyle, onPress }) => {
     const shadowStyle = shadow ? styles.shadow : {};
     const centerStyle = center ? styles.center : {};
 
@@ -32,5 +32,6 @@ export default ({ testID, title, disabled = false, center = false, shadow = fals
         containerStyle={{ ...shadowStyle, ...containerStyle }} 
         buttonStyle={{ ...styles.button, ...buttonStyle, ...centerStyle }} 
         title={title}
+        icon={icon}
         onPress={onPress} />
 };
