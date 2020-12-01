@@ -12,3 +12,7 @@ export const diff = (startDate, endDate, unitOfTime) => {
 export const formatBrDateWithTime = (date) => {
     return moment(date).format('DD/MM/YYYY HH:mm');
 }
+
+export const formatBrToUs = (date) => {
+    return moment(date, 'DD/MM/YYYY', true).format('YYYY-MM-DD');
+}

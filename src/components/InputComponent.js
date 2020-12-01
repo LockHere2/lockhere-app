@@ -12,11 +12,13 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ({ testID, secureTextEntry, maxLength, errorProps, errorMessage, errorStyle, placeholder, label, labelStyle, onChangeText }) => {
+export default ({ testID, value, secureTextEntry, keyboardType, maxLength, errorProps, errorMessage, errorStyle, placeholder, label, labelStyle, onChangeText }) => {
     return <Input
         testID={testID}
+        value={value}
         maxLength={maxLength}
         secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
         errorProps={errorProps}
         errorMessage={errorMessage}
         errorStyle={{...styles.error, errorStyle}}

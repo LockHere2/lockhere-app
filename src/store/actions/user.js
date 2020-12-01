@@ -8,8 +8,11 @@ import {
     SIGNUP, 
     SIGNUP_ERROR, 
     UPDATE_PASSWORD, 
-    UPDATE_PASSWORD_ERROR } from './actionTypes';
+    UPDATE_PASSWORD_ERROR,
+    UPDATE_BASE_INFO,
+    UPDATE_BASE_INFO_ERROR } from './actionTypes';
 import UserValidator from '../../validators/UserValidator';
+import { formatBrToUs } from '../../utils/DateUtils';
 
 export const login = (user = { email, password }) => {
     const validator = UserValidator.login(user);
@@ -70,8 +73,8 @@ export const signup = (user = { name, email, password, repassword, cpf, born }) 
 export const updatePassword = (password, repassword) => {
     return async dispatch => {
         try {
-            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/base_info`, { password, repassword }, { headers: OAuth.headers });
-
+            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/password`, { password, repassword }, { headers: OAuth.headers });
+            console.log(data)
             return dispatch({
                 type: UPDATE_PASSWORD,
                 payload: data
@@ -81,6 +84,28 @@ export const updatePassword = (password, repassword) => {
 
             return dispatch({
                 type: UPDATE_PASSWORD_ERROR,
+                payload: { message: data.message }
+            });
+        }
+    }
+}
+
+export const updateBaseInfo = ({ name, cpf, born }) => {
+    born = formatBrToUs(born);
+
+    return async dispatch => {
+        try {
+            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/base_info`, { name, cpf, born }, { headers: OAuth.headers });
+            console.log(data)
+            return dispatch({
+                type: UPDATE_BASE_INFO,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+            console.log(data)
+            return dispatch({
+                type: UPDATE_BASE_INFO_ERROR,
                 payload: { message: data.message }
             });
         }

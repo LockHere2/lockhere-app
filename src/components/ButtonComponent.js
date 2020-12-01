@@ -22,15 +22,17 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ({ testID, title, icon, disabled = false, center = false, shadow = false, containerStyle, buttonStyle, onPress }) => {
+export default ({ testID, title, icon, loading, disabled = false, center = false, shadow = false, containerStyle, buttonStyle, onPress }) => {
     const shadowStyle = shadow ? styles.shadow : {};
     const centerStyle = center ? styles.center : {};
 
     return <Button 
         testID={testID}
         disabled={disabled}
+        loading={loading}
         containerStyle={{ ...shadowStyle, ...containerStyle }} 
         buttonStyle={{ ...styles.button, ...buttonStyle, ...centerStyle }} 
+        loadingProps={{ color: '#E6EFF4' }}
         title={title}
         icon={icon}
         onPress={onPress} />
