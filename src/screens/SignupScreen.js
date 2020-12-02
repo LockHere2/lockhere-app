@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import { Input } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
+import * as Yup from "yup";
 
 import { signup } from '../store/actions/user';
 import PopupComponent from '../components/PopupComponent';
 import Button from '../components/ButtonComponent';
+import Input from '../components/InputComponent';
+import Form from '../components/FormComponent';
 import OAuth from '../model/OAuth';
+import { name, cpf, born, password, email } from '../validators/UserConstraints';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,30 +18,24 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: 'white'
   },
-  label: {
-    color: 'black'
-  },
   button: {
     backgroundColor: 'black',
     borderRadius: 10,
     marginBottom: 50
-  },
-  error: {
-    fontSize: 15,
-    marginBottom: 10
   }
 });
+
+const userSchema = Yup.object().shape({ name, email, cpf, born, password, repassword: password });
 
 class SignupScreen extends Component {
 
   state = {
-    isVisible: false,
-    born: ''
+    isVisible: false
   };
 
-  async onSubmit() {
+  async onSubmit(values) {
     const { signup } = this.props;
-    const { name, email, password, repassword, cpf, born } = this.state;
+    const { name, email, password, repassword, cpf, born } = values;
 
     await signup({ name, email, password, repassword, cpf, born });
 
@@ -56,103 +53,113 @@ class SignupScreen extends Component {
     }
   }
 
-  errorMessage(field) {
-    const { errors } = this.props.user;
-    if (!errors) return '';
-    if (!errors.signup) return '';
-
-    return errors.signup[field] || '';
-  }
-
   popupErroMessage() {
+    const { isVisible } = this.state;
+    if (!isVisible) return null;
+
     return (<PopupComponent
-      message={this.errorMessage('message')}
-      isVisible={this.state.isVisible}
+      message={this.props.user.errors.signup.message}
+      isVisible={isVisible}
       onBackdropPress={() => this.setState({ isVisible: false })}
       onPress={() => this.setState({ isVisible: false })}
     />);
   }
 
-  render() {
+  renderSignupForm(props) {
+    const { handleSubmit, values, touched, errors } = props;
+
     return (
       <ScrollView testID='scroll_view' style={styles.container}>
         <Input
           testID="signup_name_input"
           errorProps={{ testID: 'signup_name_error' }}
-          errorMessage={this.errorMessage('name')}
-          errorStyle={styles.error}
+          errorMessage={touched.name && errors.name}
           placeholder='Insira seu nome'
           label="Nome"
-          labelStyle={styles.label}
-          onChangeText={(name) => this.setState({ name })} />
+          onBlur={() => props.setFieldTouched('name', true)}
+          onChangeText={text => props.setFieldValue('name', text)} />
         <Input
           testID="signup_email_input"
           errorProps={{ testID: 'signup_email_error' }}
-          errorMessage={this.errorMessage('email')}
-          errorStyle={styles.error}
+          errorMessage={touched.email && errors.email}
           placeholder='email@exemplo.com'
           label="Email"
-          labelStyle={styles.label}
-          onChangeText={(email) => this.setState({ email })} />
+          onBlur={() => props.setFieldTouched('email', true)}
+          onChangeText={text => props.setFieldValue('email', text)} />
         <Input
           testID="signup_cpf_input"
           errorProps={{ testID: 'signup_cpf_error' }}
-          errorMessage={this.errorMessage('cpf')}
-          errorStyle={styles.error}
+          errorMessage={touched.cpf && errors.cpf}
           placeholder='Insira seu cpf'
           label="Cpf"
           maxLength={11}
           keyboardType='numeric'
-          labelStyle={styles.label}
-          onChangeText={(cpf) => this.setState({ cpf })} />
+          onBlur={() => props.setFieldTouched('cpf', true)}
+          onChangeText={text => props.setFieldValue('cpf', text)} />
         <TextInputMask
           testID="signup_date_input"
-          type={'datetime'}
+          type='datetime'
           customTextInput={Input}
           customTextInputProps={{
             testID: "signup_date_input",
             placeholder: 'Insira sua data de nascimento',
             errorProps: { testID: 'signup_date_error' },
-            errorMessage: this.errorMessage('born'),
-            errorStyle: styles.error,
-            label: 'Data de nascimento', 
-            labelStyle: styles.label 
+            errorMessage: touched.born && errors.born,
+            label: 'Data de nascimento',
           }}
           options={{
             format: 'DD/MM/YYYY'
           }}
-          value={this.state.born}
-          onChangeText={born => { console.log(born); this.setState({ born }); }}
+          value={values.born}
+          onBlur={() => props.setFieldTouched('born', true)}
+          onChangeText={text => props.setFieldValue('born', text)}
         />
         <Input
           testID="signup_password_input"
           secureTextEntry
           errorProps={{ testID: 'signup_password_error' }}
-          errorMessage={this.errorMessage('password')}
-          errorStyle={styles.error}
+          errorMessage={touched.password && errors.password}
           placeholder='Insira a senha'
           label="Senha"
-          labelStyle={styles.label}
           maxLength={15}
-          onChangeText={(password) => this.setState({ password })} />
+          onBlur={() => props.setFieldTouched('password', true)}
+          onChangeText={text => props.setFieldValue('password', text)} />
         <Input
           testID="signup_confirm_password_input"
           secureTextEntry
           errorProps={{ testID: 'signup_confirm_password_error' }}
-          errorMessage={this.errorMessage('repassword')}
-          errorStyle={styles.error}
+          errorMessage={touched.repassword && errors.repassword}
           placeholder='Confirme sua senha'
           label="Confirmar senha"
-          labelStyle={styles.label}
           maxLength={15}
-          onChangeText={(repassword) => this.setState({ repassword })} />
+          onBlur={() => props.setFieldTouched('repassword', true)}
+          onChangeText={text => props.setFieldValue('repassword', text)} />
         <Button
           testID='confirm_signup_button'
           buttonStyle={styles.button}
           title="Cadastrar"
-          onPress={() => { this.onSubmit() }} />
+          onPress={handleSubmit} />
         {this.popupErroMessage()}
       </ScrollView>
+    );
+  }
+
+  render() {
+    return (
+      <Form
+        initialValues={{ name: '', email: '', cpf: '', born: '', password: '', repassword: '' }}
+        validationSchema={userSchema}
+        onSubmit={this.onSubmit.bind(this)}
+        formComponent={this.renderSignupForm.bind(this)}
+        validate={({ password, repassword }) => {
+          const errors = {};
+          if (password !== repassword) {
+            errors.message = 'Senhas não condizem';
+          }
+
+          return errors;
+        }}
+      />
     )
   }
 }

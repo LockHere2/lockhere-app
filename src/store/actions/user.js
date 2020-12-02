@@ -11,18 +11,9 @@ import {
     UPDATE_PASSWORD_ERROR,
     UPDATE_BASE_INFO,
     UPDATE_BASE_INFO_ERROR } from './actionTypes';
-import UserValidator from '../../validators/UserValidator';
 import { formatBrToUs } from '../../utils/DateUtils';
 
 export const login = (user = { email, password }) => {
-    const validator = UserValidator.login(user);
-    if (!validator.isValid) {
-        return {
-            type: LOGIN_ERROR,
-            payload: { ...validator.errors }
-        }
-    }
-
     return async dispatch => {
         try {
             const { data, status } = await axios.post(`${env.apiUrl}/users/login`, user);
@@ -43,13 +34,7 @@ export const login = (user = { email, password }) => {
 }
 
 export const signup = (user = { name, email, password, repassword, cpf, born }) => {
-    const validator = UserValidator.signup(user);
-    if (!validator.isValid) {
-        return {
-            type: SIGNUP_ERROR,
-            payload: { ...validator.errors }
-        }
-    }
+    user.born = formatBrToUs(user.born);
 
     return async dispatch => {
         try {

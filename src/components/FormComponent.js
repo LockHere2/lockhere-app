@@ -7,8 +7,7 @@ export default ({ formComponent, validationSchema, validate, initialValues, onSu
             validationSchema={validationSchema}
             initialValues={initialValues}
             onSubmit={onSubmit}
-            validate={validate}
-            >
+            validate={validate} >
             {formComponent}
         </Formik>
     );

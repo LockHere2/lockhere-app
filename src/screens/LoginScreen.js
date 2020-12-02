@@ -1,64 +1,52 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Input, Text } from 'react-native-elements';
+import { Text } from 'react-native-elements';
 import { connect } from 'react-redux';
+import * as Yup from "yup";
 
 import { login } from '../store/actions/user';
 import PopupComponent from '../components/PopupComponent';
 import Button from '../components/ButtonComponent';
+import Form from '../components/FormComponent';
+import Input from '../components/InputComponent';
 import OAuth from '../model/OAuth';
+import { email, password } from '../validators/UserConstraints';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24
   },
-  label: {
-    color: 'black'
-  },
-  button: {
-    backgroundColor: 'black',
-    borderRadius: 10
-  },
   title: {
     alignItems: 'center',
     marginTop: '20%',
     marginBottom: '15%'
-  },
-  error: {
-    fontSize: 15,
-    marginBottom: 10
   }
 });
+
+const loginSchema = Yup.object().shape({ email, password });
 
 class LoginScreen extends Component {
 
   state = {
-    email: '',
-    password: '',
     isVisible: false
   }
 
-  errorMessage(field) {
-    const { errors } = this.props.user;
-    if (!errors) return null;
-    if (!errors.login) return null;
-
-    return errors.login[field];
-  }
-
   popupErroMessage() {
+    const { isVisible } = this.state;
+    if (!isVisible) return null;
+
     return (<PopupComponent
-      message={this.errorMessage('message')}
-      isVisible={this.state.isVisible}
+      message={this.props.user.errors.login.message}
+      isVisible={isVisible}
       onBackdropPress={() => this.setState({ isVisible: false })}
       onPress={() => this.setState({ isVisible: false })}
     />);
   }
 
-  async onLogin() {
+  async onLogin(values) {
     const { login } = this.props;
-    const { email, password } = this.state;
+    const { email, password } = values;
 
     await login({ email, password });
     const { user } = this.props;
@@ -75,7 +63,9 @@ class LoginScreen extends Component {
     }
   }
 
-  render() {
+  renderLoginForm(props) {
+    const { handleSubmit, touched, errors } = props;
+
     return (
       <ScrollView style={styles.container}>
         <View style={styles.title}>
@@ -87,36 +77,43 @@ class LoginScreen extends Component {
           placeholder='email@exemplo.com'
           label="Email"
           errorProps={{ testID: 'email_error' }}
-          errorMessage={this.errorMessage('email')}
-          errorStyle={styles.error}
-          labelStyle={styles.label}
-          onChangeText={(email) => this.setState({ email })} />
+          errorMessage={touched.email && errors.email}
+          onBlur={() => props.setFieldTouched('email', true)}
+          onChangeText={text => props.setFieldValue('email', text)} />
         <Input
           testID="password_input"
           placeholder="******" 
           label="Senha"
           errorProps={{ testID: 'password_error' }}
-          errorMessage={this.errorMessage('password')}
-          errorStyle={styles.error}
-          labelStyle={styles.label}
+          errorMessage={touched.password && errors.password}
           secureTextEntry
-          onChangeText={(password) => this.setState({ password })} />
+          onBlur={() => props.setFieldTouched('password', true)}
+          onChangeText={text => props.setFieldValue('password', text)} />
         {this.popupErroMessage()}
         <Text onPress={() => { }} style={{ alignSelf: 'flex-end' }}>Esqueci minha senha</Text>
         <View style={{ marginTop: 15 }}>
           <Button 
             testID='login_button'
-            buttonStyle={styles.button} 
             title="Entrar" 
-            onPress={() => this.onLogin()} />
+            onPress={handleSubmit} />
           <Text h4 style={{ alignSelf: 'center' }}>OU</Text>
           <Button 
             testID='signup_button'
-            buttonStyle={styles.button} 
             title="Cadastre-se" 
             onPress={() => this.props.navigation.navigate('Signup')} />
         </View>
       </ScrollView>
+    );
+  }
+
+  render() {
+    return (
+      <Form
+        initialValues={{ email: '', password: ''}}
+        validationSchema={loginSchema}
+        onSubmit={this.onLogin.bind(this)}
+        formComponent={this.renderLoginForm.bind(this)}
+      />
     )
   }
 }
