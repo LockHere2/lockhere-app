@@ -5,7 +5,7 @@ import { TextInputMask } from 'react-native-masked-text';
 import { connect } from 'react-redux';
 import * as Yup from "yup";
 
-import { updatePassword, updateBaseInfo } from '../store/actions/user';
+import { updatePassword, updateBaseInfo, sendConfirmCode } from '../store/actions/user';
 import AccordionComponent from '../components/AccordionComponent';
 import Button from '../components/ButtonComponent';
 import Input from '../components/InputComponent';
@@ -65,8 +65,14 @@ class UpdateProfileScreen extends Component {
         this.onProcess(() => this.props.updateBaseInfo(values));
     }
 
-    onUpdateEmail(values) {
-        // ir para pagina de confirmar codigo
+    async onUpdateEmail(values) {
+        const { sendConfirmCode } = this.props;
+
+        await sendConfirmCode('change_email');
+
+        const { success } = this.props.user;
+
+        if (success) this.props.navigation.navigate('ConfirmCodeScreen', { value: values.email, mode: 'email' });
     }
 
     onUpdatePassword(values) {
@@ -212,15 +218,15 @@ class UpdateProfileScreen extends Component {
                     testID="profile_email_input"
                     errorProps={{ testID: 'profile_email_error' }}
                     errorMessage={errors.email}
-                    placeholder='Insira seu email'
-                    label="Email"
+                    placeholder='Insira seu novo email'
+                    label="Novo email"
                     onChangeText={text => props.setFieldValue('email', text)} />
                 <Input
                     testID="profile_remail_input"
                     errorProps={{ testID: 'profile_remail_error' }}
                     errorMessage={errors.remail}
-                    placeholder='Repetir email'
-                    label="Repetir email"
+                    placeholder='Repita o novo email'
+                    label="Repetir novo email"
                     onChangeText={text => props.setFieldValue('remail', text)} />
                 <Text style={styles.errorMessage}>{errors.message}</Text>
                 <Button 
@@ -255,4 +261,4 @@ const mapStateToProps = (props) => {
     return props;
 }
 
-export default connect(mapStateToProps, { updatePassword, updateBaseInfo })(UpdateProfileScreen);
+export default connect(mapStateToProps, { updatePassword, updateBaseInfo, sendConfirmCode })(UpdateProfileScreen);

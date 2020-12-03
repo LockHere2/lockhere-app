@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ({ testID, value, secureTextEntry, keyboardType, maxLength, errorProps, errorMessage, errorStyle, placeholder, label, labelStyle, onBlur, onChangeText }) => {
+export default ({ testID, value, secureTextEntry, keyboardType, maxLength, errorProps, errorMessage, errorStyle, inputContainerStyle, inputStyle, placeholder, label, labelStyle, onBlur, onChangeText }) => {
     return <Input
         testID={testID}
         value={value}
@@ -25,6 +25,8 @@ export default ({ testID, value, secureTextEntry, keyboardType, maxLength, error
         placeholder={placeholder}
         label={label}
         labelStyle={{...styles.label, labelStyle}}
+        inputStyle={inputStyle}
+        inputContainerStyle={inputContainerStyle}
         onBlur={onBlur}
         onChangeText={onChangeText} />
 }

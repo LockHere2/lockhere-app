@@ -11,6 +11,7 @@ import ResumeScheduleLockerScreen from '../screens/ResumeScheduleLockerScreen';
 import OpenLockerScreen from '../screens/OpenLockerScreen';
 import OpenScheduledLocker from '../screens/OpenScheduledLocker';
 import UpdateProfileScreen from '../screens/UpdateProfileScreen';
+import ConfirmCodeScreen from '../screens/ConfirmCodeScreen';
 
 const Stack = createStackNavigator();
 
@@ -62,6 +63,11 @@ function Routes() {
                     name="UpdateProfileScreen"
                     component={UpdateProfileScreen}
                     options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ConfirmCodeScreen"
+                    component={ConfirmCodeScreen}
+                    options={{ title: 'Confirmar código' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>

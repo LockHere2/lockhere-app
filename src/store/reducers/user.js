@@ -6,7 +6,11 @@ import {
     UPDATE_PASSWORD, 
     UPDATE_PASSWORD_ERROR,
     UPDATE_BASE_INFO,
-    UPDATE_BASE_INFO_ERROR } from '../actions/actionTypes';
+    UPDATE_BASE_INFO_ERROR,
+    SEND_CONFIRM_CODE,
+    SEND_CONFIRM_CODE_ERROR,
+    UPDATE_EMAIL,
+    UPDATE_EMAIL_ERROR } from '../actions/actionTypes';
 
 const initialState = { };
 
@@ -28,6 +32,14 @@ const user = (state = initialState, action) => {
             return action.payload;
         case UPDATE_BASE_INFO_ERROR:
             return { errors: { updateBaseInfo: action.payload } };
+        case SEND_CONFIRM_CODE:
+            return action.payload;
+        case SEND_CONFIRM_CODE_ERROR:
+            return { errors: { confirmCode: action.payload } };
+        case UPDATE_EMAIL:
+            return action.payload;
+        case UPDATE_EMAIL_ERROR:
+            return { errors: { email: action.payload } };
         default:
             return state;
     }
