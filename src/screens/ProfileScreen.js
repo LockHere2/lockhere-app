@@ -54,6 +54,7 @@ class ProfileScreen extends Component {
                             size: 30,
                             color: "white"
                         }}
+                        onPress={() => this.props.navigation.navigate('PaypalScreen')}
                     />
                     <Button
                         title='Histórico'

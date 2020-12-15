@@ -116,7 +116,8 @@ class ReserveScreen extends Component {
     if (status === ReserveStatusEnum.INUSE) {
       finishButton = <Button
         buttonStyle={{ marginBottom: 10 }}
-        title='Finalizar' />;
+        title='Finalizar'
+        onPress={() => this.props.navigation.navigate('FinishReserveScreen', { id })} />;
     }
 
     return (

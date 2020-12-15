@@ -4,6 +4,10 @@ import {
     LOCKER_RESERVATION, 
     FETCH_RESERVATIONS,
     FETCH_RESERVATIONS_ERROR,
+    FETCH_RESERVATION,
+    FETCH_RESERVATION_ERROR,
+    FETCH_LOCKER,
+    FETCH_LOCKER_ERROR,
     LOADING 
 } from '../actions/actionTypes';
 
@@ -23,6 +27,14 @@ const locker = (state = initialState, action) => {
         case FETCH_RESERVATIONS:
             return { ...state, loading: false, reservations: action.payload };
         case FETCH_RESERVATIONS_ERROR:
+            return { message: action.payload, loading: false, ...initialState };
+        case FETCH_RESERVATION:
+            return { reservation: action.payload };
+        case FETCH_RESERVATION_ERROR:
+            return { message: action.payload, loading: false, ...initialState };
+        case FETCH_LOCKER:
+            return { ...state, locker: action.payload, loading: false };
+        case FETCH_LOCKER_ERROR:
             return { message: action.payload, loading: false, ...initialState };
         case LOADING:
             return { loading: true, ...state };

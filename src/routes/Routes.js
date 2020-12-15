@@ -12,6 +12,9 @@ import OpenLockerScreen from '../screens/OpenLockerScreen';
 import OpenScheduledLocker from '../screens/OpenScheduledLocker';
 import UpdateProfileScreen from '../screens/UpdateProfileScreen';
 import ConfirmCodeScreen from '../screens/ConfirmCodeScreen';
+import PaypalScreen from '../screens/PaypalScreen';
+import FinishReserveScreen from '../screens/FinishReserveScreen';
+import PaymentScreen from '../screens/PaymentScreen';
 
 const Stack = createStackNavigator();
 
@@ -68,6 +71,21 @@ function Routes() {
                     name="ConfirmCodeScreen"
                     component={ConfirmCodeScreen}
                     options={{ title: 'Confirmar código' }}
+                />
+                <Stack.Screen
+                    name="PaypalScreen"
+                    component={PaypalScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="FinishReserveScreen"
+                    component={FinishReserveScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="PaymentScreen"
+                    component={PaymentScreen}
+                    options={{ headerShown: false }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
