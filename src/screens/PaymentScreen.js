@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { CheckBox, Text, Image } from 'react-native-elements';
+import { Text, ListItem, Avatar } from 'react-native-elements';
 import { connect } from 'react-redux';
 
-import Button from '../components/ButtonComponent';
-import { Bottom } from '../components/PositionComponent';
+import paymentEnum from '../enum/PaymentEnum';
 
 const styles = StyleSheet.create({
     container: {
@@ -15,14 +14,15 @@ const styles = StyleSheet.create({
         width: 250
     },
     text: {
-        marginTop: 50
+        marginTop: 50,
+        marginBottom: 50
     }
 });
 
 class PaymentScreen extends Component {
 
-    state = {
-        payment: 'paypal'
+    onPayment(payment) {
+        if (payment === paymentEnum.PAYPAL) this.props.navigation.navigate('PaypalScreen');
     }
 
     render() {
@@ -31,22 +31,16 @@ class PaymentScreen extends Component {
         return (
             <View style={styles.container}>
                 <Text h4 style={styles.text}>Escolha sua forma de pagamento</Text>
-                <CheckBox
-                    center
-                    title='Paypal'
-                    checkedIcon={<Image source={{ uri: '../../assets/paypal.jpg' }} />}
-                    //checkedIcon='dot-circle-o'
-                    uncheckedIcon='circle-o'
-                    checked={payment === 'paypal'}
-                    onPress={() => this.setState({ payment: 'paypal' })}
-                />
-                <Bottom>
-                    <Button
-                        center
-                        title='Realizar pagamento'
-                        buttonStyle={styles.button}
-                        onPress={() => this.props.navigation.navigate('Home')} />
-                </Bottom>
+                <ListItem 
+                    bottomDivider
+                    onPress={() => this.onPayment(paymentEnum.PAYPAL)}
+                >
+                    <Avatar source={require('../../assets/paypal.jpg')} />
+                    <ListItem.Content>
+                    <ListItem.Title>Paypal</ListItem.Title>
+                    {/* <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle> */}
+                    </ListItem.Content>
+                </ListItem>
             </View>
         )
     }

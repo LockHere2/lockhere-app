@@ -15,6 +15,7 @@ import ConfirmCodeScreen from '../screens/ConfirmCodeScreen';
 import PaypalScreen from '../screens/PaypalScreen';
 import FinishReserveScreen from '../screens/FinishReserveScreen';
 import PaymentScreen from '../screens/PaymentScreen';
+import ResumePaymentScreen from '../screens/ResumePaymentScreen';
 
 const Stack = createStackNavigator();
 
@@ -85,6 +86,11 @@ function Routes() {
                 <Stack.Screen
                     name="PaymentScreen"
                     component={PaymentScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ResumePaymentScreen"
+                    component={ResumePaymentScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

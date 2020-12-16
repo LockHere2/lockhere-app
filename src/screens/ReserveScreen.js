@@ -5,7 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
-import { fetchUserReservations, updateUserReservationStatus } from '../store/actions/locker';
+import { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById, fetchLockerById } from '../store/actions/locker';
 import { formatBrDateWithTime } from '../utils/DateUtils';
 
 import LoadingComponent from '../components/LoadingComponent';
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   cardTitleView: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: 'center'
   }
 });
@@ -58,17 +58,36 @@ class ReserveScreen extends Component {
     this.setState({ isVisible: false });
   }
 
+  async onFinishReservation(id) {
+    await this.props.fetchReservationById(id);
+    const { reservation } = this.props.locker;
+    await this.props.fetchLockerById(reservation.locker_id);
+    const { locker } = this.props.locker;
+
+    reservation.hour_price = locker.hour_price;
+    reservation.size = locker.size;
+    reservation.end_date = new Date();
+    this.props.updateReservationPrice(reservation);
+
+    const data = [
+      { text: 'Valor por hora', value: reservation.hour_price, valueType: 'currency' },
+      { text: 'Total', value: reservation.price, valueType: 'currency' }
+    ];
+
+    this.props.navigation.navigate('ResumePaymentScreen', { title: 'Resumo de uso', data });
+  }
+
   renderFilter() {
     const { filter } = this.state;
     return <View style={styles.filterView}>
-      <DropDownPicker 
+      <DropDownPicker
         label='Campo'
         containerStyle={{ width: '45%' }}
         items={fields}
         defaultValue={filter.orderBy}
         onChangeItem={(item) => this.setState({ filter: { ...this.state.filter, orderBy: item.value } })}
         onClose={() => this.props.fetchUserReservations(this.state.filter)} />
-      <DropDownPicker 
+      <DropDownPicker
         label='Status'
         multiple
         multipleText='%d status'
@@ -83,11 +102,11 @@ class ReserveScreen extends Component {
 
   renderCancelPopup() {
     const { isVisible } = this.state;
-    return <ConfirmPopupComponent 
+    return <ConfirmPopupComponent
       isVisible={isVisible}
       message='Você realmente quer cancelar esta reserva? Você será reembolsado.'
-      okButton={{ title: 'Confirmar', style: { backgroundColor: 'blue' }, onPress: () => { this.onCancelReservation() } }} 
-      cancelButton={{ title: 'Cancelar', style: { backgroundColor: 'red' }, onPress: () => { this.setState({ isVisible: false }); } }}/>;
+      okButton={{ title: 'Confirmar', style: { backgroundColor: 'blue' }, onPress: () => { this.onCancelReservation() } }}
+      cancelButton={{ title: 'Cancelar', style: { backgroundColor: 'red' }, onPress: () => { this.setState({ isVisible: false }); } }} />;
   }
 
   renderReservationItem({ item }) {
@@ -117,7 +136,7 @@ class ReserveScreen extends Component {
       finishButton = <Button
         buttonStyle={{ marginBottom: 10 }}
         title='Finalizar'
-        onPress={() => this.props.navigation.navigate('FinishReserveScreen', { id })} />;
+        onPress={() => this.onFinishReservation(id)} />;
     }
 
     return (
@@ -161,4 +180,4 @@ const mapStateToProps = ({ locker }) => {
   return { locker };
 }
 
-export default connect(mapStateToProps, { fetchUserReservations, updateUserReservationStatus })(ReserveScreen);
+export default connect(mapStateToProps, { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById, fetchLockerById })(ReserveScreen);

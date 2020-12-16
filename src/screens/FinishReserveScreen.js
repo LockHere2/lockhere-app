@@ -24,18 +24,7 @@ const styles = StyleSheet.create({
 class FinishReserveScreen extends Component {
 
     async onPress() {
-        const { id } = this.props.route.params;
-        
-        await this.props.fetchReservationById(id);
-        const { reservation } = this.props.locker;
-        await this.props.fetchLockerById(reservation.locker_id);
-        const { locker } = this.props.locker;
-        
-        reservation.hour_price = locker.hour_price;
-        reservation.end_date = new Date();
-        this.props.updateReservationPrice(reservation);
-
-        this.props.navigation.navigate('PaymentScreen');
+      
     }
 
     render() {

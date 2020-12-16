@@ -1,48 +1,45 @@
 import React, { Component } from 'react';
-import {
-    SafeAreaView,
-    StyleSheet,
-    ScrollView,
-    StatusBar
-} from 'react-native';
 import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 
 import { createPaymentPaypal } from '../store/actions/payment';
-import Button from '../components/ButtonComponent';
+import LoadingComponent from '../components/LoadingComponent';
 
 class PaypalScreen extends Component {
 
     state = { uri: '' }
 
-    async checkout() {
-        const { transactions } = this.props.route.params;
-        /*const transactions = [
+    async componentDidMount() {
+        const { reservation } = this.props.locker;
+        const { price, size } = reservation;
+        const transactions = [
             {
-                "item_list": {
-                    "items": [
+                item_list: {
+                    items: [
                         {
-                            "name": "Armário grande",
-                            "sku": "item",
-                            "price": "2.00",
-                            "currency": "BRL",
-                            "quantity": 1
+                            name: "Armário " + size,
+                            sku: "item",
+                            price,
+                            currency: "BRL",
+                            quantity: 1
                         }
                     ]
                 },
-                "amount": {
-                    "currency": "BRL",
-                    "total": "2.00"
+                amount: {
+                    currency: "BRL",
+                    total: price
                 },
-                "description": "This is the payment description."
+                description: "Alocação de armário"
             }
-        ]*/
-
+        ];
 
         await this.props.createPaymentPaypal(transactions);
         const { uri } = this.props.payment;
-        console.log(uri)
         this.setState({ uri });
+    }
+
+    handleResponse() {
+        // direcionar ele para a tela de abrir o armário
     }
 
     renderWebView() {
@@ -53,15 +50,21 @@ class PaypalScreen extends Component {
         return <WebView
             source={{ uri }}
             //onNavigationStateChange={data =>
+
                 // this.handleResponse(data)
             //}
         />
     }
 
     render() {
+        const { loading } = this.props.payment;
+
+        if (loading) {
+            return <LoadingComponent />;
+        }
+
         return (
             <>
-                <Button title='paypal' onPress={() => this.checkout()} />
                 {this.renderWebView()}
             </>
         )

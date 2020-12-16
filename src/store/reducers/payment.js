@@ -1,4 +1,4 @@
-import { PAYMENT, PAYMENT_ERROR } from '../actions/actionTypes';
+import { PAYMENT, PAYMENT_ERROR, LOADING } from '../actions/actionTypes';
 
 const initialState = { };
 
@@ -8,6 +8,8 @@ const payment = (state = initialState, action) => {
             return action.payload;
         case PAYMENT_ERROR:
             return { message: action.payload }
+        case LOADING:
+            return { loading: true, ...state };
         default:
             return state;
     }
