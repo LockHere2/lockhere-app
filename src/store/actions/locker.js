@@ -15,6 +15,8 @@ import {
     UPDATE_RESERVATION_STATUS_ERROR,
     FETCH_RESERVATION,
     FETCH_RESERVATION_ERROR,
+    FINISH_RESERVATION,
+    FINISH_RESERVATION_ERROR,
     LOADING 
 } from './actionTypes';
 import OAuth from '../../model/OAuth';
@@ -90,6 +92,30 @@ export const createReservation = (reservation) => {
             const { data } = err.response;
             return dispatch({
                 type: CREATE_RESERVATION_ERROR,
+                payload: data.message
+            });
+        }
+    }
+}
+
+export const finishReservation = (id, price) => {
+
+    return async dispatch => {
+        dispatch({
+            type: LOADING
+        });
+    
+        try {
+            await axios.put(`${env.apiUrl}/reserve/${id}/finish`, { price }, { headers: OAuth.headers });
+
+            return dispatch({
+                type: FINISH_RESERVATION
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: FINISH_RESERVATION_ERROR,
                 payload: data.message
             });
         }

@@ -158,6 +158,7 @@ class ReserveScreen extends Component {
 
   render() {
     const { loading, reservations } = this.props.locker;
+    console.log('opaaa', loading, reservations)
     if (loading) {
       return <LoadingComponent />
     }

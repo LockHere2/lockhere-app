@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 
 import { createPaymentPaypal } from '../store/actions/payment';
+import { finishReservation } from '../store/actions/locker';
 import LoadingComponent from '../components/LoadingComponent';
+
+import 'url-search-params-polyfill';
 
 class PaypalScreen extends Component {
 
@@ -12,34 +15,44 @@ class PaypalScreen extends Component {
     async componentDidMount() {
         const { reservation } = this.props.locker;
         const { price, size } = reservation;
-        const transactions = [
-            {
-                item_list: {
-                    items: [
-                        {
-                            name: "Armário " + size,
-                            sku: "item",
-                            price,
-                            currency: "BRL",
-                            quantity: 1
-                        }
-                    ]
-                },
-                amount: {
-                    currency: "BRL",
-                    total: price
-                },
-                description: "Alocação de armário"
-            }
-        ];
+        const transactions = {
+            reservationId: reservation._id,
+            transactions: [
+                {
+                    item_list: {
+                        items: [
+                            {
+                                name: "Armário " + size,
+                                sku: "item",
+                                price,
+                                currency: "BRL",
+                                quantity: 1
+                            }
+                        ]
+                    },
+                    amount: {
+                        currency: "BRL",
+                        total: price
+                    },
+                    description: "Alocação de armário"
+                }
+            ]
+        };
 
         await this.props.createPaymentPaypal(transactions);
         const { uri } = this.props.payment;
         this.setState({ uri });
     }
 
-    handleResponse() {
-        // direcionar ele para a tela de abrir o armário
+    async handleResponse(data) {
+        const urlParams = new URLSearchParams(data.url);
+        const success = urlParams.get('success');
+
+        if (success) {
+            const { reservation } = this.props.locker;
+            await this.props.finishReservation(reservation._id, reservation.price);
+            this.props.navigation.navigate('FinishReserveScreen');
+        }
     }
 
     renderWebView() {
@@ -49,10 +62,7 @@ class PaypalScreen extends Component {
 
         return <WebView
             source={{ uri }}
-            //onNavigationStateChange={data =>
-
-                // this.handleResponse(data)
-            //}
+            onNavigationStateChange={data => this.handleResponse(data)}
         />
     }
 
@@ -75,4 +85,4 @@ const mapStateToProps = (props) => {
     return props;
 }
 
-export default connect(mapStateToProps, { createPaymentPaypal })(PaypalScreen);
+export default connect(mapStateToProps, { createPaymentPaypal, finishReservation })(PaypalScreen);

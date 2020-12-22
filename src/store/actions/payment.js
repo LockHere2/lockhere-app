@@ -12,7 +12,7 @@ export const createPaymentPaypal = (transactions) => {
         });
 
         try {
-            const { data } = await axios.post(`${env.apiUrl}/paypal/create-payment`, { transactions }, { headers: OAuth.headers });
+            const { data } = await axios.post(`${env.apiUrl}/paypal/create-payment`, transactions, { headers: OAuth.headers });
 
             return dispatch({
                 type: PAYMENT,

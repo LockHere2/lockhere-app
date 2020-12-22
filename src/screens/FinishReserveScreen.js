@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-elements';
-import { connect } from 'react-redux';
 
 import Button from '../components/ButtonComponent';
 import { Bottom } from '../components/PositionComponent';
-
-import { updateReservationPrice, fetchReservationById, fetchLockerById } from '../store/actions/locker';
 
 const styles = StyleSheet.create({
     container: {
@@ -21,10 +18,10 @@ const styles = StyleSheet.create({
     }
 });
 
-class FinishReserveScreen extends Component {
+export default class FinishReserveScreen extends Component {
 
     async onPress() {
-      
+        this.props.navigation.navigate('Home');
     }
 
     render() {
@@ -42,10 +39,3 @@ class FinishReserveScreen extends Component {
         )
     }
 }
-
-
-const mapStateToProps = (props) => {
-    return props;
-}
-  
-export default connect(mapStateToProps, { updateReservationPrice, fetchReservationById, fetchLockerById })(FinishReserveScreen);

@@ -26,8 +26,6 @@ class PaymentScreen extends Component {
     }
 
     render() {
-        const { payment } = this.state;
-        // clicar direto no botão de pagamento
         return (
             <View style={styles.container}>
                 <Text h4 style={styles.text}>Escolha sua forma de pagamento</Text>
