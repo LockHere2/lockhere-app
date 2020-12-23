@@ -1,7 +1,7 @@
 import Validator from './Validator';
 import { diff } from '../utils/DateUtils';
 
-export default class LockerValidator {
+export default class ReservationValidator {
 
     static MIN_TIME_RESERVATION = 60;
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-elements';
+import { TabActions } from '@react-navigation/native';
 
 import Button from '../components/ButtonComponent';
 import { Bottom } from '../components/PositionComponent';
@@ -22,6 +23,8 @@ export default class FinishReserveScreen extends Component {
 
     async onPress() {
         this.props.navigation.navigate('Home');
+        const jumpToAction = TabActions.jumpTo("Home");
+        this.props.navigation.dispatch(jumpToAction);
     }
 
     render() {

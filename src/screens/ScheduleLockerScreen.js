@@ -4,12 +4,14 @@ import { StyleSheet, View } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 
 import { handleReservation } from '../store/actions/locker';
-import LockerValidator from '../validators/LockerValidator';
+import ReservationValidator from '../validators/ReservationValidator';
+import { formatBrToUsWithTime } from '../utils/DateUtils';
 
 import { Bottom } from '../components/PositionComponent';
 import DatePicker from '../components/DatePickerComponent';
 import Button from '../components/ButtonComponent';
 import PopupComponent from '../components/PopupComponent';
+import Form from '../components/FormComponent';
 
 const styles = StyleSheet.create({
     container: {
@@ -37,13 +39,16 @@ class ScheduleLockerScreen extends Component {
         isVisible: false
     }
 
-    onPress() {
+    onPress(values) {
         const { reservation } = this.props.locker;
-        const { startDate, endDate } = reservation;
+        const { startDate, endDate } = values;
 
-        const { isValid, errors } = LockerValidator.isReservationDateValid(startDate, endDate);
+        const { isValid, errors } = ReservationValidator.isReservationDateValid(startDate, endDate);
 
         if (isValid) {
+            reservation.start_date = formatBrToUsWithTime(startDate);
+            reservation.end_date = formatBrToUsWithTime(endDate);
+            this.props.handleReservation(reservation);
             this.props.navigation.navigate('ResumeScheduleLockerScreen');
         } else {
             this.setState({ errorMessage: errors.message, isVisible: true });
@@ -61,20 +66,19 @@ class ScheduleLockerScreen extends Component {
         />);
     }
 
-    datePicker({ field }) {
-        const { reservation } = this.props.locker;
-
+    datePicker(props, field) {
+        const { values } = props;
         return <DatePicker
-            date={reservation[field]}
-            mode='datetime'
-            format='DD.MM.YYYY HH:mm'
-            onDateChange={(date) => {
-                reservation[field] = date;
-                this.props.handleReservation(reservation);
-            }} />;
+                date={values[field]}
+                mode='datetime'
+                format='DD/MM/YYYY HH:mm'
+                onDateChange={(date) => props.setFieldValue(field, date)} 
+            />;
     }
 
-    render() {
+    renderForm(props) {
+        const { handleSubmit, touched, errors } = props;
+
         return (
             <View style={styles.container}>
                 {this.popupErroMessage()}
@@ -83,21 +87,33 @@ class ScheduleLockerScreen extends Component {
                     <Input
                         label='Inicio'
                         labelStyle={styles.label}
-                        testID="data_input_start"
-                        field='startDate'
-                        InputComponent={this.datePicker.bind(this)} />
+                        testID='data_input_start'
+                        errorMessage={touched.startDate && errors.startDate}
+                        onBlur={() => props.setFieldTouched('startDate', true)}
+                        InputComponent={() => this.datePicker(props, 'startDate')} />
 
                     <Input
                         label='Termino'
                         labelStyle={styles.label}
-                        testID="data_input_end"
-                        field='endDate'
-                        InputComponent={this.datePicker.bind(this)} />
+                        testID='data_input_end'
+                        errorMessage={touched.endDate && errors.endDate}
+                        onBlur={() => props.setFieldTouched('endDate', true)}
+                        InputComponent={() => this.datePicker(props, 'endDate')} />
                 </View>
                 <Bottom>
-                    <Button center title='Proximo' buttonStyle={styles.button} onPress={() => this.onPress()} />
+                    <Button center title='Proximo' buttonStyle={styles.button} onPress={handleSubmit} />
                 </Bottom>
             </View>
+        );
+    }
+
+    render() {
+        return (
+            <Form
+                initialValues={{ startDate: '', endDate: '' }}
+                onSubmit={this.onPress.bind(this)}
+                formComponent={this.renderForm.bind(this)}
+            />
         )
     }
 }

@@ -16,8 +16,7 @@ import NumberFormat from '../components/CurrencyNumberFormatComponent';
 const styles = StyleSheet.create({
   view: {
     flex: 1,
-    padding: 24,
-    marginBottom: 5
+    padding: 24
   },
   filterView: {
     flex: 1,
