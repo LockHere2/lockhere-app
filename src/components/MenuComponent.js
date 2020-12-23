@@ -30,8 +30,8 @@ export default class MenuComponent extends Component {
     render() {
         return (
             <Tab.Navigator tabBarOptions={{ style: styles.navigator, labelStyle: styles.label, activeTintColor: 'orange' }}>
-                <Tab.Screen options={{ tabBarIcon: ({ focused }) => this.icon({ focused, name: 'home' }) }} name="Home" component={MapScreen} />
-                <Tab.Screen options={{ tabBarIcon: ({ focused }) => this.icon({ focused, name: 'book' }) }}  name="Reservas" component={ReserveScreen} />
+                <Tab.Screen options={{ unmountOnBlur: true, tabBarIcon: ({ focused }) => this.icon({ focused, name: 'home' }) }} name="Home" component={MapScreen} />
+                <Tab.Screen options={{ unmountOnBlur: true, tabBarIcon: ({ focused }) => this.icon({ focused, name: 'book' }) }} name="Reservas" component={ReserveScreen} />
                 <Tab.Screen options={{ tabBarIcon: ({ focused }) => this.icon({ focused, name: 'person' }) }}  name="Perfil" component={ProfileScreen} />
             </Tab.Navigator>
         )

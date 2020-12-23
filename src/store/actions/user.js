@@ -1,18 +1,23 @@
 import axios from 'axios';
 
 import env from '../../env';
-import { LOGIN, LOGIN_ERROR, SIGNUP, SIGNUP_ERROR } from './actionTypes';
-import UserValidator from '../../validators/UserValidator';
+import OAuth from '../../model/OAuth';
+import { 
+    LOGIN, 
+    LOGIN_ERROR, 
+    SIGNUP, 
+    SIGNUP_ERROR, 
+    UPDATE_PASSWORD, 
+    UPDATE_PASSWORD_ERROR,
+    UPDATE_BASE_INFO,
+    UPDATE_BASE_INFO_ERROR,
+    SEND_CONFIRM_CODE,
+    SEND_CONFIRM_CODE_ERROR,
+    UPDATE_EMAIL,
+    UPDATE_EMAIL_ERROR } from './actionTypes';
+import { formatBrToUs } from '../../utils/DateUtils';
 
 export const login = (user = { email, password }) => {
-    const validator = UserValidator.login(user);
-    if (!validator.isValid) {
-        return {
-            type: LOGIN_ERROR,
-            payload: { ...validator.errors }
-        }
-    }
-
     return async dispatch => {
         try {
             const { data, status } = await axios.post(`${env.apiUrl}/users/login`, user);
@@ -33,13 +38,7 @@ export const login = (user = { email, password }) => {
 }
 
 export const signup = (user = { name, email, password, repassword, cpf, born }) => {
-    const validator = UserValidator.signup(user);
-    if (!validator.isValid) {
-        return {
-            type: SIGNUP_ERROR,
-            payload: { ...validator.errors }
-        }
-    }
+    user.born = formatBrToUs(user.born);
 
     return async dispatch => {
         try {
@@ -58,4 +57,88 @@ export const signup = (user = { name, email, password, repassword, cpf, born }) 
             });
         }
     }
+}
+
+export const updatePassword = (password, repassword) => {
+    return async dispatch => {
+        try {
+            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/password`, { password, repassword }, { headers: OAuth.headers });
+
+            return dispatch({
+                type: UPDATE_PASSWORD,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: UPDATE_PASSWORD_ERROR,
+                payload: { message: data.message }
+            });
+        }
+    }
+}
+
+export const updateEmail = (email, code) => {
+    return async dispatch => {
+        try {
+            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/email`, { email, code }, { headers: OAuth.headers });
+
+            return dispatch({
+                type: UPDATE_EMAIL,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: UPDATE_EMAIL_ERROR,
+                payload: { message: data.message }
+            });
+        }
+    }
+}
+
+export const updateBaseInfo = ({ name, cpf, born }) => {
+    born = formatBrToUs(born);
+
+    return async dispatch => {
+        try {
+            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/base_info`, { name, cpf, born }, { headers: OAuth.headers });
+
+            return dispatch({
+                type: UPDATE_BASE_INFO,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: UPDATE_BASE_INFO_ERROR,
+                payload: { message: data.message }
+            });
+        }
+    }
+}
+
+export const sendConfirmCode = (action) => {
+
+    return async dispatch => {
+        try {
+            await axios.post(`${env.apiUrl}/users/user/send-confirm-code`, { action }, { headers: OAuth.headers });
+
+            return dispatch({
+                type: SEND_CONFIRM_CODE,
+                payload: { success: true }
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: SEND_CONFIRM_CODE_ERROR,
+                payload: { message: data.message }
+            });
+        }
+    }
+
 }

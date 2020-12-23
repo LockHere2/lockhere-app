@@ -19,13 +19,18 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ({ isVisible = false, message, onBackdropPress = () => { }, onPress = () => { } }) => {
+export default ({ isVisible = false, message, 
+    okButton = { title: '', onPress: () => {}, style: {} }, 
+    cancelButton = { title: '', onPress: () => {}, style: {} } }) => {
     return (
-        <Overlay isVisible={isVisible} onBackdropPress={onBackdropPress}>
+        <Overlay isVisible={isVisible} >
             <View style={styles.view}>
                 <Text style={styles.text} >{message}</Text>
                 <Divider style={styles.divider} />
-                <Button buttonStyle={styles.button} title="OK" onPress={onPress} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                    <Button buttonStyle={{ ...styles.button, ...okButton.style }} title={okButton.title} onPress={okButton.onPress} />
+                    <Button buttonStyle={{ ...styles.button, ...cancelButton.style }} title={cancelButton.title} onPress={cancelButton.onPress} />
+                </View>
             </View>
         </Overlay>
     )

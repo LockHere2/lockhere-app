@@ -6,6 +6,16 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import LockersScreen from '../screens/LockersScreen';
+import ScheduleLockerScreen from '../screens/ScheduleLockerScreen';
+import ResumeScheduleLockerScreen from '../screens/ResumeScheduleLockerScreen';
+import OpenLockerScreen from '../screens/OpenLockerScreen';
+import OpenScheduledLocker from '../screens/OpenScheduledLocker';
+import UpdateProfileScreen from '../screens/UpdateProfileScreen';
+import ConfirmCodeScreen from '../screens/ConfirmCodeScreen';
+import PaypalScreen from '../screens/PaypalScreen';
+import FinishReserveScreen from '../screens/FinishReserveScreen';
+import PaymentScreen from '../screens/PaymentScreen';
+import ResumePaymentScreen from '../screens/ResumePaymentScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +42,56 @@ function Routes() {
                     name="Lockers"
                     component={LockersScreen}
                     options={{ title: 'Seleção de armário' }}
+                />
+                <Stack.Screen
+                    name="ScheduleLocker"
+                    component={ScheduleLockerScreen}
+                    options={{ title: 'Reservar um armário' }}
+                />
+                <Stack.Screen
+                    name="ResumeScheduleLockerScreen"
+                    component={ResumeScheduleLockerScreen}
+                    options={{ title: 'Reservar um armário' }}
+                />
+                <Stack.Screen
+                    name="OpenLockerScreen"
+                    component={OpenLockerScreen}
+                    options={{ title: 'Armário aberto' }}
+                />
+                <Stack.Screen
+                    name="OpenScheduledLocker"
+                    component={OpenScheduledLocker}
+                    options={{ title: 'Armário aberto' }}
+                />
+                <Stack.Screen
+                    name="UpdateProfileScreen"
+                    component={UpdateProfileScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ConfirmCodeScreen"
+                    component={ConfirmCodeScreen}
+                    options={{ title: 'Confirmar código' }}
+                />
+                <Stack.Screen
+                    name="PaypalScreen"
+                    component={PaypalScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="FinishReserveScreen"
+                    component={FinishReserveScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="PaymentScreen"
+                    component={PaymentScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ResumePaymentScreen"
+                    component={ResumePaymentScreen}
+                    options={{ headerShown: false }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
