@@ -7,7 +7,6 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import LockersScreen from '../screens/LockersScreen';
 import ScheduleLockerScreen from '../screens/ScheduleLockerScreen';
-import ResumeScheduleLockerScreen from '../screens/ResumeScheduleLockerScreen';
 import OpenLockerScreen from '../screens/OpenLockerScreen';
 import OpenScheduledLocker from '../screens/OpenScheduledLocker';
 import UpdateProfileScreen from '../screens/UpdateProfileScreen';
@@ -16,6 +15,7 @@ import PaypalScreen from '../screens/PaypalScreen';
 import FinishReserveScreen from '../screens/FinishReserveScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import ResumePaymentScreen from '../screens/ResumePaymentScreen';
+import SuccessScreen from '../screens/SuccessScreen';
 
 const Stack = createStackNavigator();
 
@@ -46,11 +46,6 @@ function Routes() {
                 <Stack.Screen
                     name="ScheduleLocker"
                     component={ScheduleLockerScreen}
-                    options={{ title: 'Reservar um armário' }}
-                />
-                <Stack.Screen
-                    name="ResumeScheduleLockerScreen"
-                    component={ResumeScheduleLockerScreen}
                     options={{ title: 'Reservar um armário' }}
                 />
                 <Stack.Screen
@@ -91,6 +86,11 @@ function Routes() {
                 <Stack.Screen
                     name="ResumePaymentScreen"
                     component={ResumePaymentScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="SuccessScreen"
+                    component={SuccessScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

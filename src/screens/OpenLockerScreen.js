@@ -44,13 +44,13 @@ class OpenLockerScreen extends Component {
     componentDidMount() {
         const { reservation } = this.props.locker;
         reservation.price = 0;
-        delete reservation.endDate;
+        delete reservation.end_date;
         this.props.handleReservation(reservation);
     }
 
     async onClick() {
         const { reservation } = this.props.locker;
-        reservation.startDate = new Date();
+        reservation.start_date = new Date();
         reservation.status = ReserveStatusEnum.INUSE;
         await this.props.createReservation(reservation);
         this.setState({ action: 'close' });
@@ -60,7 +60,7 @@ class OpenLockerScreen extends Component {
         return (
             <>
                 <Text h4 style={styles.textCenter}>Parabéns, seu armário foi trancado</Text>
-                <Text h4 style={{ ...styles.textCenter, marginTop: 200 }}>A contagem do tempo irá começar após 5 minutos.</Text>
+                <Text h4 style={{ ...styles.textCenter, marginTop: 200 }}>A contagem do tempo irá começar.</Text>
                 <Bottom>
                     <Button
                         center

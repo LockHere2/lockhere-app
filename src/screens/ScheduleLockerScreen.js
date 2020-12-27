@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 
-import { handleReservation } from '../store/actions/locker';
-import ReservationValidator from '../validators/ReservationValidator';
+import { updateReservationPrice } from '../store/actions/locker';
 import { formatBrToUsWithTime } from '../utils/DateUtils';
+import ReservationValidator from '../validators/ReservationValidator';
+import ReserveStatusEnum from '../enum/ReserveStatusEnum';
 
 import { Bottom } from '../components/PositionComponent';
 import DatePicker from '../components/DatePickerComponent';
@@ -48,8 +49,13 @@ class ScheduleLockerScreen extends Component {
         if (isValid) {
             reservation.start_date = formatBrToUsWithTime(startDate);
             reservation.end_date = formatBrToUsWithTime(endDate);
-            this.props.handleReservation(reservation);
-            this.props.navigation.navigate('ResumeScheduleLockerScreen');
+            reservation.status = ReserveStatusEnum.SCHEDULED;
+            this.props.updateReservationPrice(reservation);
+            const data = [
+                { text: 'Valor por hora', value: reservation.hour_price, valueType: 'currency' },
+                { text: 'Total', value: reservation.price, valueType: 'currency' }
+            ];
+            this.props.navigation.navigate('ResumePaymentScreen', { title: 'Resumo do agendamento', data });
         } else {
             this.setState({ errorMessage: errors.message, isVisible: true });
         }
@@ -122,4 +128,4 @@ const mapStateToProps = ({ locker, handleReservation }) => {
     return { locker, handleReservation };
 }
 
-export default connect(mapStateToProps, { handleReservation })(ScheduleLockerScreen);
+export default connect(mapStateToProps, { updateReservationPrice })(ScheduleLockerScreen);

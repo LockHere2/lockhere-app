@@ -90,6 +90,8 @@ export const createReservation = (reservation) => {
             });
         } catch (err) {
             const { data } = err.response;
+
+            console.log(data)
             return dispatch({
                 type: CREATE_RESERVATION_ERROR,
                 payload: data.message

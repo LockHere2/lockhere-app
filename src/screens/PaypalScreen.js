@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 
 import { createPaymentPaypal } from '../store/actions/payment';
-import { finishReservation } from '../store/actions/locker';
+import { finishReservation, createReservation } from '../store/actions/locker';
 import LoadingComponent from '../components/LoadingComponent';
+import ReserveStatusEnum from '../enum/ReserveStatusEnum';
 
 import 'url-search-params-polyfill';
 
@@ -48,7 +49,14 @@ class PaypalScreen extends Component {
         const urlParams = new URLSearchParams(data.url);
         const success = urlParams.get('success');
 
-        if (success) {
+        if (!success) return;
+
+        const { reservation } = this.props.locker;
+
+        if (reservation.status === ReserveStatusEnum.SCHEDULED) {
+            await this.props.createReservation(reservation);
+            this.props.navigation.navigate('SuccessScreen', { title: 'Obrigado por utilizar nossos serviços' });
+        } else {
             const { reservation } = this.props.locker;
             await this.props.finishReservation(reservation._id, reservation.price);
             this.props.navigation.navigate('FinishReserveScreen');
@@ -85,4 +93,4 @@ const mapStateToProps = (props) => {
     return props;
 }
 
-export default connect(mapStateToProps, { createPaymentPaypal, finishReservation })(PaypalScreen);
+export default connect(mapStateToProps, { createPaymentPaypal, finishReservation, createReservation })(PaypalScreen);

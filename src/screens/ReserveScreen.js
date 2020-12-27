@@ -104,8 +104,8 @@ class ReserveScreen extends Component {
     return <ConfirmPopupComponent
       isVisible={isVisible}
       message='Você realmente quer cancelar esta reserva? Você será reembolsado.'
-      okButton={{ title: 'Confirmar', style: { backgroundColor: 'blue' }, onPress: () => { this.onCancelReservation() } }}
-      cancelButton={{ title: 'Cancelar', style: { backgroundColor: 'red' }, onPress: () => { this.setState({ isVisible: false }); } }} />;
+      okButton={{ title: 'Sim', style: { backgroundColor: 'black' }, onPress: () => { this.onCancelReservation() } }}
+      cancelButton={{ title: 'Não', style: { backgroundColor: 'red' }, onPress: () => { this.setState({ isVisible: false }); } }} />;
   }
 
   renderReservationItem({ item }) {

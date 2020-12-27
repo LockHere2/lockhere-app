@@ -35,8 +35,7 @@ class PaymentScreen extends Component {
                 >
                     <Avatar source={require('../../assets/paypal.jpg')} />
                     <ListItem.Content>
-                    <ListItem.Title>Paypal</ListItem.Title>
-                    {/* <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle> */}
+                        <ListItem.Title>Paypal</ListItem.Title>
                     </ListItem.Content>
                 </ListItem>
             </View>
