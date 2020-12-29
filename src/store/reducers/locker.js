@@ -1,4 +1,5 @@
 import { 
+    CREATE_RESERVATION,
     FETCH_LOCKER_GROUP, 
     FETCH_LOCKER_GROUP_ERROR, 
     LOCKER_RESERVATION, 
@@ -20,6 +21,8 @@ const initialState = {
 
 const locker = (state = initialState, action) => {
     switch(action.type) {
+        case CREATE_RESERVATION:
+            return { ...state, reservation: action.payload };
         case FETCH_LOCKER_GROUP:
             return { lockerGroup: action.payload };
         case FETCH_LOCKER_GROUP_ERROR:

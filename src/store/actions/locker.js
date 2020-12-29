@@ -81,17 +81,17 @@ export const createReservation = (reservation) => {
         });
     
         try {
-            await axios.post(`${env.apiUrl}/reserve`,
+            const { data } = await axios.post(`${env.apiUrl}/reserve`,
                 reservation,
                 { headers: OAuth.headers });
-    
+
             return dispatch({
-                type: CREATE_RESERVATION
+                type: CREATE_RESERVATION,
+                payload: data
             });
         } catch (err) {
             const { data } = err.response;
 
-            console.log(data)
             return dispatch({
                 type: CREATE_RESERVATION_ERROR,
                 payload: data.message

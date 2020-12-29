@@ -5,13 +5,20 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
-import { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById, fetchLockerById } from '../store/actions/locker';
+import { 
+  fetchUserReservations, 
+  updateUserReservationStatus, 
+  updateReservationPrice, 
+  fetchReservationById, 
+  fetchLockerById } from '../store/actions/locker';
+import { refundPaymentPaypal } from '../store/actions/payment';
 import { formatBrDateWithTime } from '../utils/DateUtils';
 
 import LoadingComponent from '../components/LoadingComponent';
 import ConfirmPopupComponent from '../components/ConfirmPopupComponent';
 import ReserveStatusEnum from '../enum/ReserveStatusEnum';
 import NumberFormat from '../components/CurrencyNumberFormatComponent';
+import LoadingPopup from '../components/LoadingPopupComponent';
 
 const styles = StyleSheet.create({
   view: {
@@ -39,7 +46,8 @@ const fields = [
 class ReserveScreen extends Component {
 
   state = {
-    isVisible: false,
+    isCancelPopupVisible: false,
+    isLoadingPopupVisible: false,
     filter: {
       orderBy: fields[0].value,
       status: ReserveStatusEnum.toArrayDropdown().map(item => item.value)
@@ -52,9 +60,12 @@ class ReserveScreen extends Component {
 
   async onCancelReservation() {
     const { id } = this.state;
+    console.log(id)
+    this.setState({ isCancelPopupVisible: false, isLoadingPopupVisible: true });
     await this.props.updateUserReservationStatus(id, ReserveStatusEnum.CANCELED);
+    await this.props.refundPaymentPaypal(id);
     await this.props.fetchUserReservations(this.state.filter);
-    this.setState({ isVisible: false });
+    this.setState({ isLoadingPopupVisible: false });
   }
 
   async onFinishReservation(id) {
@@ -96,16 +107,23 @@ class ReserveScreen extends Component {
         onChangeItem={(status) => this.setState({ filter: { ...this.state.filter, status } })}
         onClose={() => this.props.fetchUserReservations(this.state.filter)} />
     </View>
+  }
 
+  renderLoadingPopup() {
+    const { isLoadingPopupVisible } = this.state;
+    return <LoadingPopup 
+      isVisible={isLoadingPopupVisible}
+      message='Estamos realizando o cancelamento e o reembolso, por favor aguarde.'
+    />
   }
 
   renderCancelPopup() {
-    const { isVisible } = this.state;
+    const { isCancelPopupVisible } = this.state;
     return <ConfirmPopupComponent
-      isVisible={isVisible}
+      isVisible={isCancelPopupVisible}
       message='Você realmente quer cancelar esta reserva? Você será reembolsado.'
       okButton={{ title: 'Sim', style: { backgroundColor: 'black' }, onPress: () => { this.onCancelReservation() } }}
-      cancelButton={{ title: 'Não', style: { backgroundColor: 'red' }, onPress: () => { this.setState({ isVisible: false }); } }} />;
+      cancelButton={{ title: 'Não', style: { backgroundColor: 'red' }, onPress: () => { this.setState({ isCancelPopupVisible: false }); } }} />;
   }
 
   renderReservationItem({ item }) {
@@ -119,7 +137,7 @@ class ReserveScreen extends Component {
     let cancelButton = null;
     if (status === ReserveStatusEnum.SCHEDULED && moment().diff(start_date, 'milliseconds') < 0) {
       cancelButton = <Button
-        onPress={() => this.setState({ isVisible: true, id })}
+        onPress={() => this.setState({ isCancelPopupVisible: true, id })}
         buttonStyle={{ backgroundColor: 'red' }}
         title='Cancelar' />;
     }
@@ -157,7 +175,7 @@ class ReserveScreen extends Component {
 
   render() {
     const { loading, reservations } = this.props.locker;
-    console.log('opaaa', loading, reservations)
+
     if (loading) {
       return <LoadingComponent />
     }
@@ -166,6 +184,7 @@ class ReserveScreen extends Component {
       <ScrollView style={styles.view}>
         {this.renderFilter()}
         {this.renderCancelPopup()}
+        {this.renderLoadingPopup()}
         <FlatList
           data={reservations}
           renderItem={this.renderReservationItem.bind(this)}
@@ -180,4 +199,11 @@ const mapStateToProps = ({ locker }) => {
   return { locker };
 }
 
-export default connect(mapStateToProps, { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById, fetchLockerById })(ReserveScreen);
+export default connect(mapStateToProps, { 
+  fetchUserReservations, 
+  updateUserReservationStatus, 
+  updateReservationPrice, 
+  fetchReservationById, 
+  fetchLockerById,
+  refundPaymentPaypal
+})(ReserveScreen);

@@ -29,3 +29,51 @@ export const createPaymentPaypal = (transactions) => {
     }
 
 }
+
+export const refundPaymentPaypal = (reservationId) => {
+    return async dispatch => {
+        dispatch({
+            type: LOADING
+        });
+
+        try {
+            const { data } = await axios.put(`${env.apiUrl}/paypal/refund-payment/${reservationId}`, {}, { headers: OAuth.headers });
+
+            return dispatch({
+                type: PAYMENT,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: PAYMENT_ERROR,
+                payload: data.message
+            });
+        }
+    }
+}
+
+export const updatePaymentTransactionReservationId = (paymentTransactionId, reservationId) => {
+    return async dispatch => {
+        dispatch({
+            type: LOADING
+        });
+
+        try {
+            const { data } = await axios.put(`${env.apiUrl}/payment-transaction/${paymentTransactionId}`, { reservation_id: reservationId }, { headers: OAuth.headers });
+
+            return dispatch({
+                type: PAYMENT,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: PAYMENT_ERROR,
+                payload: data.message
+            });
+        }
+    }
+}
