@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 
 import { createPaymentPaypal, updatePaymentTransactionReservationId } from '../store/actions/payment';
-import { finishReservation, createReservation } from '../store/actions/locker';
+import { finishReservation, createReservation } from '../store/actions/reserve';
 import LoadingComponent from '../components/LoadingComponent';
 import ReserveStatusEnum from '../enum/ReserveStatusEnum';
 
@@ -14,7 +14,7 @@ class PaypalScreen extends Component {
     state = { uri: '' }
 
     async componentDidMount() {
-        const { reservation } = this.props.locker;
+        const { reservation } = this.props.reserve;
         const { price, size } = reservation;
 
         const transactions = {
@@ -51,13 +51,13 @@ class PaypalScreen extends Component {
         const paymentTransactionId = urlParams.get('paymentTransactionId');
 
         if (!success) return;
-
-        if (this.props.locker.reservation.status === ReserveStatusEnum.SCHEDULED) {
-            await this.props.createReservation(this.props.locker.reservation);
-            await this.props.updatePaymentTransactionReservationId(paymentTransactionId, this.props.locker.reservation._id);
+        console.log('reserva ', this.props.reserve.reservation)
+        if (this.props.reserve.reservation.status === ReserveStatusEnum.SCHEDULED) {
+            await this.props.createReservation(this.props.reserve.reservation);
+            await this.props.updatePaymentTransactionReservationId(paymentTransactionId, this.props.reserve.reservation._id);
             this.props.navigation.navigate('SuccessScreen', { title: 'Obrigado por utilizar nossos serviços' });
         } else {
-            const { reservation } = this.props.locker;
+            const { reservation } = this.props.reserve;
             await this.props.finishReservation(reservation._id, reservation.price);
             this.props.navigation.navigate('FinishReserveScreen');
         }

@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
 import { Text } from 'react-native-elements';
-
-import { updateReservationPrice } from '../store/actions/locker';
 
 import SimpleListComponent from '../components/SimpleListComponent';
 import Button from '../components/ButtonComponent';
@@ -23,7 +20,7 @@ const styles = StyleSheet.create({
     }
 })
 
-class ResumePaymentScreen extends Component {
+export default class ResumePaymentScreen extends Component {
 
     render() {
         const { title, data } = this.props.route.params;
@@ -44,9 +41,3 @@ class ResumePaymentScreen extends Component {
         );
     }
 }
-
-const mapStateToProps = ({ locker }) => {
-    return { locker };
-}
-
-export default connect(mapStateToProps, { updateReservationPrice })(ResumePaymentScreen);

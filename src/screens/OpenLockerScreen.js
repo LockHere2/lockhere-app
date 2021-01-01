@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
 
-import { handleReservation, createReservation } from '../store/actions/locker';
+import { handleReservation, createReservation } from '../store/actions/reserve';
 
 import { Bottom } from '../components/PositionComponent';
 import Button from '../components/ButtonComponent';
@@ -42,14 +42,14 @@ class OpenLockerScreen extends Component {
     }
 
     componentDidMount() {
-        const { reservation } = this.props.locker;
+        const { reservation } = this.props.reserve;
         reservation.price = 0;
         delete reservation.end_date;
         this.props.handleReservation(reservation);
     }
 
     async onClick() {
-        const { reservation } = this.props.locker;
+        const { reservation } = this.props.reserve;
         reservation.start_date = new Date();
         reservation.status = ReserveStatusEnum.INUSE;
         await this.props.createReservation(reservation);
@@ -73,7 +73,8 @@ class OpenLockerScreen extends Component {
     }
 
     onRenderOpen() {
-        const { lockerGroup, reservation } = this.props.locker;
+        const { lockerGroup } = this.props.locker;
+        const { reservation } = this.props.reserve;
         const { address } = lockerGroup;
         return (
             <>
@@ -81,7 +82,7 @@ class OpenLockerScreen extends Component {
                 <Text h4 style={styles.textCenter}>Armário selecionado</Text>
                 <Button
                     center
-                    title={reservation.number.toString()}
+                    title={reservation.number}
                     titleStyle={{ color: 'white' }}
                     buttonStyle={styles.lockerButtonStyle}
                 />
@@ -111,8 +112,8 @@ class OpenLockerScreen extends Component {
     }
 }
 
-const mapStateToProps = ({ locker }) => {
-    return { locker };
+const mapStateToProps = ({ locker, reserve }) => {
+    return { locker, reserve };
 }
 
 export default connect(mapStateToProps, { handleReservation, createReservation })(OpenLockerScreen);

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 
-import { updateReservationPrice } from '../store/actions/locker';
+import { updateReservationPrice } from '../store/actions/reserve';
 import { formatBrToUsWithTime } from '../utils/DateUtils';
 import ReservationValidator from '../validators/ReservationValidator';
 import ReserveStatusEnum from '../enum/ReserveStatusEnum';
@@ -41,7 +41,7 @@ class ScheduleLockerScreen extends Component {
     }
 
     onPress(values) {
-        const { reservation } = this.props.locker;
+        const { reservation } = this.props.reserve;
         const { startDate, endDate } = values;
 
         const { isValid, errors } = ReservationValidator.isReservationDateValid(startDate, endDate);
@@ -124,8 +124,8 @@ class ScheduleLockerScreen extends Component {
     }
 }
 
-const mapStateToProps = ({ locker, handleReservation }) => {
-    return { locker, handleReservation };
+const mapStateToProps = ({ reserve }) => {
+    return { reserve };
 }
 
 export default connect(mapStateToProps, { updateReservationPrice })(ScheduleLockerScreen);

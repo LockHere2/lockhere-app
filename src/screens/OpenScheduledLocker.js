@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
 
-import { updateUserReservationStatus } from '../store/actions/locker';
+import { updateUserReservationStatus } from '../store/actions/reserve';
 
 import { Bottom } from '../components/PositionComponent';
 import Button from '../components/ButtonComponent';

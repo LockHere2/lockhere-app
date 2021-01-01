@@ -3,7 +3,8 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { Text } from 'react-native-elements';
 
-import { fetchLockersByGroupId, handleReservation } from '../store/actions/locker';
+import { fetchLockersByGroupId } from '../store/actions/locker';
+import { handleReservation } from '../store/actions/reserve';
 
 import { Bottom } from '../components/PositionComponent';
 import LoadingComponent from '../components/LoadingComponent';
@@ -63,15 +64,21 @@ class LockersScreen extends Component {
     return lockers.find(({ number }) => number === selectedLocker);
   }
 
-  onOpenLocker() {
+  newReservation() {
     const locker = this.getSelectedLocker();
-    this.props.handleReservation(locker);
+    const reservation = { ...locker };
+    reservation.locker_id = locker._id;
+    delete reservation._id;
+    this.props.handleReservation(reservation);
+  }
+
+  onOpenLocker() {
+    this.newReservation();
     this.props.navigation.navigate('OpenLockerScreen', { action: 'open' });
   }
 
   onScheduleLocker() {
-    const locker = this.getSelectedLocker();
-    this.props.handleReservation(locker);
+    this.newReservation();
     this.props.navigation.navigate('ScheduleLocker');
   }
 

@@ -5,12 +5,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
-import { 
-  fetchUserReservations, 
-  updateUserReservationStatus, 
-  updateReservationPrice, 
-  fetchReservationById, 
-  fetchLockerById } from '../store/actions/locker';
+import { fetchLockerById } from '../store/actions/locker';
+import { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById } from '../store/actions/reserve';
 import { refundPaymentPaypal } from '../store/actions/payment';
 import { formatBrDateWithTime } from '../utils/DateUtils';
 
@@ -60,7 +56,6 @@ class ReserveScreen extends Component {
 
   async onCancelReservation() {
     const { id } = this.state;
-    console.log(id)
     this.setState({ isCancelPopupVisible: false, isLoadingPopupVisible: true });
     await this.props.updateUserReservationStatus(id, ReserveStatusEnum.CANCELED);
     await this.props.refundPaymentPaypal(id);
@@ -70,7 +65,7 @@ class ReserveScreen extends Component {
 
   async onFinishReservation(id) {
     await this.props.fetchReservationById(id);
-    const { reservation } = this.props.locker;
+    const { reservation } = this.props.reserve;
     await this.props.fetchLockerById(reservation.locker_id);
     const { locker } = this.props.locker;
 
@@ -174,7 +169,7 @@ class ReserveScreen extends Component {
   }
 
   render() {
-    const { loading, reservations } = this.props.locker;
+    const { loading, reservations } = this.props.reserve;
 
     if (loading) {
       return <LoadingComponent />
@@ -195,8 +190,8 @@ class ReserveScreen extends Component {
   }
 }
 
-const mapStateToProps = ({ locker }) => {
-  return { locker };
+const mapStateToProps = ({ locker, reserve }) => {
+  return { locker, reserve };
 }
 
 export default connect(mapStateToProps, { 
