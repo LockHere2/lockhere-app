@@ -14,7 +14,9 @@ import {
     SEND_CONFIRM_CODE,
     SEND_CONFIRM_CODE_ERROR,
     UPDATE_EMAIL,
-    UPDATE_EMAIL_ERROR } from './actionTypes';
+    UPDATE_EMAIL_ERROR, 
+    PROFILE,
+    LOADING } from './actionTypes';
 import { formatBrToUs } from '../../utils/DateUtils';
 
 export const login = (user = { email, password }) => {
@@ -53,6 +55,30 @@ export const signup = (user = { name, email, password, repassword, cpf, born }) 
 
             return dispatch({
                 type: SIGNUP_ERROR,
+                payload: { message: data.message }
+            });
+        }
+    }
+}
+
+export const profile = () => {
+    return async dispatch => {
+        dispatch({ 
+            type: LOADING 
+        });
+
+        try {
+            const { data } = await axios.get(`${env.apiUrl}/users/profile`, { headers: OAuth.headers });
+
+            return dispatch({
+                type: PROFILE,
+                payload: data
+            });
+        } catch (err) {
+            const { data } = err.response;
+
+            return dispatch({
+                type: PROFILE_ERROR,
                 payload: { message: data.message }
             });
         }

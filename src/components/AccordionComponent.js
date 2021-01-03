@@ -44,9 +44,10 @@ export default class AccordionComponent extends Component {
     };
 
     render() {
-        const { sections } = this.props;
+        const { sections, containerStyle } = this.props;
         return (
             <Accordion
+                containerStyle={containerStyle}
                 sections={sections}
                 activeSections={this.state.activeSections}
                 renderHeader={this._renderHeader}

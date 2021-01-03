@@ -5,13 +5,15 @@ import { TextInputMask } from 'react-native-masked-text';
 import { connect } from 'react-redux';
 import * as Yup from "yup";
 
-import { updatePassword, updateBaseInfo, sendConfirmCode } from '../store/actions/user';
+import { updatePassword, updateBaseInfo, sendConfirmCode, profile } from '../store/actions/user';
 import AccordionComponent from '../components/AccordionComponent';
 import Button from '../components/ButtonComponent';
 import Input from '../components/InputComponent';
 import Form from '../components/FormComponent';
 import PopupComponent from '../components/PopupComponent';
+import LoadingComponent from '../components/LoadingComponent';
 import { name, cpf, born, password, email } from '../validators/UserConstraints';
+import { formatUsToBr } from '../utils/DateUtils';
 
 const styles = StyleSheet.create({
     container: {
@@ -25,6 +27,9 @@ const styles = StyleSheet.create({
     errorMessage: {
         color: 'red',
         fontSize: 16
+    },
+    accordion: {
+        marginTop: 50
     }
 });
 
@@ -53,6 +58,10 @@ class UpdateProfileScreen extends Component {
             content: this.emailForm()
         }
     ];
+
+    componentDidMount() {
+        this.props.profile();
+    }
 
     async onProcess(cb) {
         this.setState({ isLoading: true });
@@ -90,8 +99,13 @@ class UpdateProfileScreen extends Component {
     }
 
     baseInfoForm() {
+        const { profile } = this.props.user;
+        if (!profile) return null;
+
+        const initialValues = { name: profile.name || '', cpf: profile.cpf || '', born: formatUsToBr(profile.born) || '' };
+
         return <Form 
-            initialValues={{ name: '', cpf: '', born: '' }} 
+            initialValues={initialValues} 
             validationSchema={baseInfoSchema}
             onSubmit={this.onUpdateBaseInfo.bind(this)}
             formComponent={this.renderBaseInfoForm.bind(this)} />
@@ -141,6 +155,7 @@ class UpdateProfileScreen extends Component {
                     errorMessage={errors.name}
                     placeholder='Insira seu nome'
                     label="Nome"
+                    value={values.name}
                     onChangeText={text => props.setFieldValue('name', text)} />
                 <Input
                     testID="profile_cpf_input"
@@ -150,6 +165,7 @@ class UpdateProfileScreen extends Component {
                     errorMessage={errors.cpf}
                     placeholder='Insira seu cpf'
                     label="Cpf"
+                    value={values.cpf}
                     onChangeText={text => props.setFieldValue('cpf', text)} />
                 <TextInputMask
                     testID="profile_date_input"
@@ -238,6 +254,12 @@ class UpdateProfileScreen extends Component {
     }
 
     render() {
+        const { loading } = this.props.user;
+
+        if (loading) {
+            return <LoadingComponent />
+        }
+
         return (
             <View style={styles.container}>
                 {this.renderPopup()}
@@ -248,8 +270,8 @@ class UpdateProfileScreen extends Component {
                     source={{ uri: 'https://i.pinimg.com/originals/b0/fe/79/b0fe7968d609e092852ab455c2e7f116.jpg' }}>
                     <Accessory size={25} name='camera-alt' />
                 </Avatar>
-                <Text h4 style={styles.center}>Atualizar</Text>
                 <AccordionComponent
+                    containerStyle={styles.accordion}
                     sections={this.sections}
                 />
             </View>
@@ -261,4 +283,4 @@ const mapStateToProps = (props) => {
     return props;
 }
 
-export default connect(mapStateToProps, { updatePassword, updateBaseInfo, sendConfirmCode })(UpdateProfileScreen);
+export default connect(mapStateToProps, { updatePassword, updateBaseInfo, sendConfirmCode, profile })(UpdateProfileScreen);

@@ -20,3 +20,7 @@ export const formatBrToUsWithTime = (date) => {
 export const formatBrToUs = (date) => {
     return moment(date, 'DD/MM/YYYY', true).format('YYYY-MM-DD');
 }
+
+export const formatUsToBr = (date) => {
+    return moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+}

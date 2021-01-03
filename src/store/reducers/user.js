@@ -10,18 +10,25 @@ import {
     SEND_CONFIRM_CODE,
     SEND_CONFIRM_CODE_ERROR,
     UPDATE_EMAIL,
-    UPDATE_EMAIL_ERROR } from '../actions/actionTypes';
+    UPDATE_EMAIL_ERROR,
+    PROFILE,
+    PROFILE_ERROR,
+    LOADING } from '../actions/actionTypes';
 
-const initialState = { };
+const initialState = { profile: {} };
 
 const user = (state = initialState, action) => {
     switch(action.type) {
         case LOGIN:
             return action.payload;
-        case SIGNUP_ERROR:
-            return { errors: { signup: action.payload } };
         case LOGIN_ERROR:
             return { errors: { login: action.payload } };
+        case PROFILE:
+            return { profile: action.payload, loading: false };
+        case PROFILE_ERROR:
+            return { errors: { profile: action.payload } };
+        case SIGNUP_ERROR:
+            return { errors: { signup: action.payload } };
         case SIGNUP:
             return action.payload;
         case UPDATE_PASSWORD:
@@ -40,6 +47,8 @@ const user = (state = initialState, action) => {
             return action.payload;
         case UPDATE_EMAIL_ERROR:
             return { errors: { email: action.payload } };
+        case LOADING:
+            return { loading: true, ...state };
         default:
             return state;
     }
