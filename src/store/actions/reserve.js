@@ -15,7 +15,8 @@ import {
     FETCH_RESERVATION_ERROR,
     FINISH_RESERVATION,
     FINISH_RESERVATION_ERROR,
-    LOADING 
+    LOADING, 
+    CLEAN_FETCH_RESERVATIONS
 } from './actionTypes';
 
 export const createReservation = (reservation) => {
@@ -69,12 +70,12 @@ export const finishReservation = (id, price) => {
     }
 }
 
-export const fetchUserReservations = (params = { orderBy, status, direction}) => {
+export const fetchUserReservations = (params = { orderBy, status, direction, page }) => {
     return async dispatch => {
         dispatch({
             type: LOADING
         });
-
+        
         try {
             const { data } = await axios.get(`${env.apiUrl}/reserve`, { params, headers: OAuth.headers });
 
@@ -84,6 +85,7 @@ export const fetchUserReservations = (params = { orderBy, status, direction}) =>
             });
         } catch (err) {
             const { data } = err.response;
+
             return dispatch({
                 type: FETCH_RESERVATIONS_ERROR,
                 payload: data.message
@@ -134,6 +136,12 @@ export const updateUserReservationStatus = (id, status) => {
                 payload: data.message
             });
         }
+    }
+}
+
+export const cleanFetchReservations = () => {
+    return {
+        type: CLEAN_FETCH_RESERVATIONS
     }
 }
 

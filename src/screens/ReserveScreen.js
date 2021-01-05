@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { FlatList, StyleSheet, ScrollView, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { Card, Text, Icon, Button } from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
 import { fetchLockerById } from '../store/actions/locker';
-import { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById } from '../store/actions/reserve';
+import { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById, cleanFetchReservations } from '../store/actions/reserve';
 import { refundPaymentPaypal } from '../store/actions/payment';
 import { formatBrDateWithTime } from '../utils/DateUtils';
 
@@ -30,6 +30,13 @@ const styles = StyleSheet.create({
   cardTitleView: {
     flexDirection: 'row',
     justifyContent: 'center'
+  },
+  cardText: {
+    fontSize: 16
+  },
+  dropDownPicker: {
+    width: '45%', 
+    height: 40
   }
 });
 
@@ -41,17 +48,37 @@ const fields = [
 
 class ReserveScreen extends Component {
 
-  state = {
-    isCancelPopupVisible: false,
-    isLoadingPopupVisible: false,
-    filter: {
+  constructor(props) {
+    super(props);
+    this.countReservations = 0;
+    this.filter = {
+      page: 1,
       orderBy: fields[0].value,
       status: ReserveStatusEnum.toArrayDropdown().map(item => item.value)
     }
   }
 
+  state = {
+    isCancelPopupVisible: false,
+    isLoadingPopupVisible: false
+  }
+
   componentDidMount() {
-    this.props.fetchUserReservations(this.state.filter);
+    this.onRefetchUserReservations();
+  }
+
+  onRefetchUserReservations() {
+    this.props.cleanFetchReservations();
+    this.onFetchUserReservations();
+  }
+
+  async onFetchUserReservations() {
+    await this.props.fetchUserReservations(this.filter);
+    const { reservations } = this.props.reserve;
+    if (reservations.length !== this.countReservations) {
+      this.filter.page += 1;
+      this.countReservations = reservations.length;
+    }
   }
 
   async onCancelReservation() {
@@ -82,25 +109,28 @@ class ReserveScreen extends Component {
     this.props.navigation.navigate('ResumePaymentScreen', { title: 'Resumo de uso', data });
   }
 
+  renderFooter() {
+    if (!this.props.reserve.loading) return null;
+    return <ActivityIndicator size='large' />;
+  }
+ 
   renderFilter() {
-    const { filter } = this.state;
     return <View style={styles.filterView}>
       <DropDownPicker
         label='Campo'
-        containerStyle={{ width: '45%' }}
+        containerStyle={styles.dropDownPicker}
         items={fields}
-        defaultValue={filter.orderBy}
-        onChangeItem={(item) => this.setState({ filter: { ...this.state.filter, orderBy: item.value } })}
-        onClose={() => this.props.fetchUserReservations(this.state.filter)} />
+        defaultValue={this.filter.orderBy}
+        onChangeItem={(item) => { this.filter.page = 1; this.filter.orderBy = item.value; this.onRefetchUserReservations(); }} />
       <DropDownPicker
         label='Status'
         multiple
         multipleText='%d status'
-        containerStyle={{ width: '45%' }}
-        defaultValue={filter.status}
+        containerStyle={styles.dropDownPicker}
+        defaultValue={this.filter.status}
         items={ReserveStatusEnum.toArrayDropdown()}
-        onChangeItem={(status) => this.setState({ filter: { ...this.state.filter, status } })}
-        onClose={() => this.props.fetchUserReservations(this.state.filter)} />
+        onChangeItem={(status) => { this.filter.page = 1; this.filter.status = status; }}
+        onClose={() => this.onRefetchUserReservations()} />
     </View>
   }
 
@@ -158,9 +188,9 @@ class ReserveScreen extends Component {
           <Card.Title>{formatBrDateWithTime(start_date)}</Card.Title>
         </View>
         <Card.Divider />
-        <Text>Endereço: {street}</Text>
-        <Text>Armário: {number}</Text>
-        <NumberFormat value={price} />
+        <Text style={styles.cardText}>Endereço: {street}</Text>
+        <Text style={styles.cardText}>Armário: {number}</Text>
+        <NumberFormat textStyle={styles.cardText} value={price} />
         {finishButton}
         {openButton}
         {cancelButton}
@@ -171,21 +201,24 @@ class ReserveScreen extends Component {
   render() {
     const { loading, reservations } = this.props.reserve;
 
-    if (loading) {
-      return <LoadingComponent />
-    }
+    //if (loading) {
+    //  return <LoadingComponent />
+    //}
 
     return (
-      <ScrollView style={styles.view}>
-        {this.renderFilter()}
+      <View style={styles.view}>
+        <View style={{ marginBottom: 50 }}>{this.renderFilter()}</View>
         {this.renderCancelPopup()}
         {this.renderLoadingPopup()}
         <FlatList
           data={reservations}
           renderItem={this.renderReservationItem.bind(this)}
           keyExtractor={item => item.id}
+          onEndReached={this.onFetchUserReservations.bind(this)}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={this.renderFooter.bind(this)}
         />
-      </ScrollView>
+      </View>
     )
   }
 }
@@ -200,5 +233,6 @@ export default connect(mapStateToProps, {
   updateReservationPrice, 
   fetchReservationById, 
   fetchLockerById,
+  cleanFetchReservations,
   refundPaymentPaypal
 })(ReserveScreen);
