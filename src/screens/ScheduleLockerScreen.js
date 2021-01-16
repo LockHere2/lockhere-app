@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 
 import { updateReservationPrice } from '../store/actions/reserve';
-import { formatBrToUsWithTime } from '../utils/DateUtils';
+import { getBrTimeWithDate } from '../utils/DateUtils';
 import ReservationValidator from '../validators/ReservationValidator';
 import ReserveStatusEnum from '../enum/ReserveStatusEnum';
 
@@ -13,6 +13,8 @@ import DatePicker from '../components/DatePickerComponent';
 import Button from '../components/ButtonComponent';
 import PopupComponent from '../components/PopupComponent';
 import Form from '../components/FormComponent';
+
+import moment from 'moment';
 
 const styles = StyleSheet.create({
     container: {
@@ -45,10 +47,9 @@ class ScheduleLockerScreen extends Component {
         const { startDate, endDate } = values;
 
         const { isValid, errors } = ReservationValidator.isReservationDateValid(startDate, endDate);
-
         if (isValid) {
-            reservation.start_date = formatBrToUsWithTime(startDate);
-            reservation.end_date = formatBrToUsWithTime(endDate);
+            reservation.start_date = getBrTimeWithDate(startDate, 'DD/MM/YYYY HH:mm')
+            reservation.end_date = getBrTimeWithDate(endDate, 'DD/MM/YYYY HH:mm')
             reservation.status = ReserveStatusEnum.SCHEDULED;
             this.props.updateReservationPrice(reservation);
             const data = [

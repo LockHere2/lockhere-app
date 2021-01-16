@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { Text, Overlay } from 'react-native-elements';
-
-import LoadingComponent from './LoadingComponent';
 
 const styles = StyleSheet.create({
     view: {
@@ -19,7 +17,7 @@ export default ({ isVisible = false, message }) => {
         <Overlay isVisible={isVisible} >
             <View style={styles.view}>
                 <Text style={styles.text} >{message}</Text>
-                <LoadingComponent />
+                <ActivityIndicator size='large' />
             </View>
         </Overlay>
     )

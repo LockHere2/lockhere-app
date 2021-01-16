@@ -57,13 +57,14 @@ class ProfileScreen extends Component {
                         onPress={() => this.props.navigation.navigate('PaypalScreen')}
                     />
                     <Button
-                        title='Histórico'
+                        title='Dúvidas frequentes'
                         buttonStyle={styles.buttonStyle}
                         icon={{
-                            name: "lock",
+                            name: "question",
                             size: 30,
                             color: "white"
                         }}
+                        onPress={() => this.props.navigation.navigate('AnsweredQuestionsScreen')}
                     />
                 </View>
                 <View style={{ ...styles.buttonView, marginTop: 20 }}>

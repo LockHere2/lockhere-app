@@ -18,8 +18,7 @@ import { formatUsToBr } from '../utils/DateUtils';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 24,
-        paddingTop: 40
+        padding: 24
     },
     center: {
         alignSelf: 'center'
@@ -29,7 +28,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     accordion: {
-        marginTop: 50
+        marginTop: 20
     }
 });
 
@@ -44,23 +43,32 @@ class UpdateProfileScreen extends Component {
         success: false
     }
 
-    sections = [
-        {
-            title: 'Informações basicas',
-            content: this.baseInfoForm()
-        },
-        {
-            title: 'Senha',
-            content: this.passwordForm()
-        },
-        {
-            title: 'Email',
-            content: this.emailForm()
-        }
-    ];
+    sections = [];
 
     componentDidMount() {
         this.props.profile();
+    }
+
+    onLoadForms() {
+        this.sections = [
+            {
+                title: 'Informações basicas',
+                content: this.baseInfoForm()
+            },
+            {
+                title: 'Senha',
+                content: this.passwordForm()
+            },
+            {
+                title: 'Email',
+                content: this.emailForm()
+            }
+        ];
+    }
+
+    onProfileImage() {
+        const { profile } = this.props.user;
+        return profile.image ? { uri: profile.image } : require('../../assets/no-image.jpg')
     }
 
     async onProcess(cb) {
@@ -259,6 +267,8 @@ class UpdateProfileScreen extends Component {
         if (loading) {
             return <LoadingComponent />
         }
+        
+        this.onLoadForms();
 
         return (
             <View style={styles.container}>
@@ -266,8 +276,9 @@ class UpdateProfileScreen extends Component {
                 <Avatar
                     size="large"
                     rounded
+                    imageProps={{ transition: false }}
                     containerStyle={styles.center}
-                    source={{ uri: 'https://i.pinimg.com/originals/b0/fe/79/b0fe7968d609e092852ab455c2e7f116.jpg' }}>
+                    source={this.onProfileImage()}>
                     <Accessory size={25} name='camera-alt' />
                 </Avatar>
                 <AccordionComponent

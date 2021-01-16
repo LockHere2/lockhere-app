@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { Card, Text, Icon, Button } from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { TabActions } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
 import { fetchLockerById } from '../store/actions/locker';
 import { fetchUserReservations, updateUserReservationStatus, updateReservationPrice, fetchReservationById, cleanFetchReservations } from '../store/actions/reserve';
 import { refundPaymentPaypal } from '../store/actions/payment';
-import { formatBrDateWithTime } from '../utils/DateUtils';
+import { formatBrDateWithTime, getBrTime } from '../utils/DateUtils';
 
 import LoadingComponent from '../components/LoadingComponent';
 import ConfirmPopupComponent from '../components/ConfirmPopupComponent';
@@ -86,8 +87,8 @@ class ReserveScreen extends Component {
     this.setState({ isCancelPopupVisible: false, isLoadingPopupVisible: true });
     await this.props.updateUserReservationStatus(id, ReserveStatusEnum.CANCELED);
     await this.props.refundPaymentPaypal(id);
-    await this.props.fetchUserReservations(this.state.filter);
     this.setState({ isLoadingPopupVisible: false });
+    this.props.navigation.dispatch(TabActions.jumpTo('Home'));
   }
 
   async onFinishReservation(id) {
@@ -98,7 +99,8 @@ class ReserveScreen extends Component {
 
     reservation.hour_price = locker.hour_price;
     reservation.size = locker.size;
-    reservation.end_date = new Date();
+    reservation.start_date = moment(reservation.start_date);
+    reservation.end_date = getBrTime();
     this.props.updateReservationPrice(reservation);
 
     const data = [
@@ -147,7 +149,7 @@ class ReserveScreen extends Component {
     return <ConfirmPopupComponent
       isVisible={isCancelPopupVisible}
       message='Você realmente quer cancelar esta reserva? Você será reembolsado.'
-      okButton={{ title: 'Sim', style: { backgroundColor: 'black' }, onPress: () => { this.onCancelReservation() } }}
+      okButton={{ title: 'Sim', onPress: () => { this.onCancelReservation(); } }}
       cancelButton={{ title: 'Não', style: { backgroundColor: 'red' }, onPress: () => { this.setState({ isCancelPopupVisible: false }); } }} />;
   }
 
@@ -160,14 +162,16 @@ class ReserveScreen extends Component {
     let openButton = null;
     let finishButton = null;
     let cancelButton = null;
-    if (status === ReserveStatusEnum.SCHEDULED && moment().diff(start_date, 'milliseconds') < 0) {
+    if (status === ReserveStatusEnum.SCHEDULED && getBrTime().diff(start_date, 'milliseconds') < 0) {
       cancelButton = <Button
         onPress={() => this.setState({ isCancelPopupVisible: true, id })}
         buttonStyle={{ backgroundColor: 'red' }}
         title='Cancelar' />;
     }
 
-    if (status === ReserveStatusEnum.SCHEDULED && moment().diff(start_date, 'milliseconds') > 0) {
+    if (status === ReserveStatusEnum.SCHEDULED && 
+      getBrTime().diff(start_date, 'milliseconds') > 0 &&
+      getBrTime().diff(end_date, 'milliseconds') < 0) {
       openButton = <Button
         onPress={() => this.props.navigation.navigate('OpenScheduledLocker', { action: 'open', id })}
         buttonStyle={{ marginBottom: 10 }}
@@ -190,6 +194,7 @@ class ReserveScreen extends Component {
         <Card.Divider />
         <Text style={styles.cardText}>Endereço: {street}</Text>
         <Text style={styles.cardText}>Armário: {number}</Text>
+        { end_date ? <Text style={styles.cardText}>Termino: {formatBrDateWithTime(end_date)}</Text> : null }
         <NumberFormat textStyle={styles.cardText} value={price} />
         {finishButton}
         {openButton}
@@ -204,7 +209,7 @@ class ReserveScreen extends Component {
     //if (loading) {
     //  return <LoadingComponent />
     //}
-
+     
     return (
       <View style={styles.view}>
         <View style={{ marginBottom: 50 }}>{this.renderFilter()}</View>

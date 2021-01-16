@@ -44,7 +44,7 @@ class OpenScheduledLockerScreen extends Component {
 
     async onClick() {
         const { id } = this.state;
-        await this.props.updateUserReservationStatus(id, ReserveStatusEnum.INUSE);
+        //await this.props.updateUserReservationStatus(id, ReserveStatusEnum.INUSE);
         this.setState({ action: 'close' });
     }
 

@@ -72,9 +72,9 @@ export const finishReservation = (id, price) => {
 
 export const fetchUserReservations = (params = { orderBy, status, direction, page }) => {
     return async dispatch => {
-        dispatch({
-            type: LOADING
-        });
+        // dispatch({
+        //     type: LOADING
+        // });
         
         try {
             const { data } = await axios.get(`${env.apiUrl}/reserve`, { params, headers: OAuth.headers });

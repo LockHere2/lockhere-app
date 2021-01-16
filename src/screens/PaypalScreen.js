@@ -51,8 +51,9 @@ class PaypalScreen extends Component {
         const paymentTransactionId = urlParams.get('paymentTransactionId');
 
         if (!success) return;
-        console.log('reserva ', this.props.reserve.reservation)
+
         if (this.props.reserve.reservation.status === ReserveStatusEnum.SCHEDULED) {
+            console.log('no fim', this.props.reserve.reservation)
             await this.props.createReservation(this.props.reserve.reservation);
             await this.props.updatePaymentTransactionReservationId(paymentTransactionId, this.props.reserve.reservation._id);
             this.props.navigation.navigate('SuccessScreen', { title: 'Obrigado por utilizar nossos serviços' });

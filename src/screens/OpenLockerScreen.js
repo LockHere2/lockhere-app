@@ -5,6 +5,8 @@ import { Text } from 'react-native-elements';
 
 import { handleReservation, createReservation } from '../store/actions/reserve';
 
+import { getBrTime } from '../utils/DateUtils';
+
 import { Bottom } from '../components/PositionComponent';
 import Button from '../components/ButtonComponent';
 import ReserveStatusEnum from '../enum/ReserveStatusEnum';
@@ -50,7 +52,7 @@ class OpenLockerScreen extends Component {
 
     async onClick() {
         const { reservation } = this.props.reserve;
-        reservation.start_date = new Date();
+        reservation.start_date = getBrTime();
         reservation.status = ReserveStatusEnum.INUSE;
         await this.props.createReservation(reservation);
         this.setState({ action: 'close' });

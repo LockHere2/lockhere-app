@@ -16,6 +16,7 @@ import FinishReserveScreen from '../screens/FinishReserveScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import ResumePaymentScreen from '../screens/ResumePaymentScreen';
 import SuccessScreen from '../screens/SuccessScreen';
+import AnsweredQuestionsScreen from '../screens/AnsweredQuestionsScreen';
 
 const Stack = createStackNavigator();
 
@@ -61,7 +62,7 @@ function Routes() {
                 <Stack.Screen
                     name="UpdateProfileScreen"
                     component={UpdateProfileScreen}
-                    options={{ headerShown: false }}
+                    options={{ title: 'Perfil' }}
                 />
                 <Stack.Screen
                     name="ConfirmCodeScreen"
@@ -92,6 +93,11 @@ function Routes() {
                     name="SuccessScreen"
                     component={SuccessScreen}
                     options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AnsweredQuestionsScreen"
+                    component={AnsweredQuestionsScreen}
+                    options={{ title: 'Dúvidas frequentes' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
