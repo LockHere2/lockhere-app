@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { TextInputMask } from 'react-native-masked-text';
 import * as Yup from "yup";
 
-import { signup } from '../store/actions/user';
+import { signup, sendConfirmCode } from '../store/actions/user';
 import PopupComponent from '../components/PopupComponent';
 import Button from '../components/ButtonComponent';
 import Input from '../components/InputComponent';
@@ -30,11 +30,13 @@ const userSchema = Yup.object().shape({ name, email, cpf, born, password, repass
 class SignupScreen extends Component {
 
   state = {
-    isVisible: false
+    isVisible: false,
+    isLoading: false
   };
 
   async onSubmit(values) {
-    const { signup } = this.props;
+    this.setState({ isLoading: true });
+    const { signup, sendConfirmCode } = this.props;
     const { name, email, password, repassword, cpf, born } = values;
 
     await signup({ name, email, password, repassword, cpf, born });
@@ -43,7 +45,9 @@ class SignupScreen extends Component {
 
     if (user && !user.errors) {
       OAuth.token = user.token;
-      this.props.navigation.navigate('Home');
+      await sendConfirmCode('active_email');
+      this.setState({ isLoading: false });
+      this.props.navigation.navigate('ConfirmCodeScreen', { value: email, mode: 'email' });
       return;
     }
 
@@ -51,6 +55,8 @@ class SignupScreen extends Component {
     if (errors && errors.signup && errors.signup.message) {
       this.setState({ isVisible: true });
     }
+
+    this.setState({ isLoading: false });
   }
 
   popupErroMessage() {
@@ -66,6 +72,7 @@ class SignupScreen extends Component {
   }
 
   renderSignupForm(props) {
+    const { isLoading } = this.state;
     const { handleSubmit, values, touched, errors } = props;
 
     return (
@@ -136,6 +143,7 @@ class SignupScreen extends Component {
           onChangeText={text => props.setFieldValue('repassword', text)} />
         <Button
           testID='confirm_signup_button'
+          loading={isLoading}
           buttonStyle={styles.button}
           title="Cadastrar"
           onPress={handleSubmit} />
@@ -168,4 +176,4 @@ const mapStateToProps = (props) => {
   return props;
 }
 
-export default connect(mapStateToProps, { signup })(SignupScreen);
+export default connect(mapStateToProps, { signup, sendConfirmCode })(SignupScreen);

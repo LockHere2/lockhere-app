@@ -17,6 +17,7 @@ import PaymentScreen from '../screens/PaymentScreen';
 import ResumePaymentScreen from '../screens/ResumePaymentScreen';
 import SuccessScreen from '../screens/SuccessScreen';
 import AnsweredQuestionsScreen from '../screens/AnsweredQuestionsScreen';
+import PaymentModesScreen from '../screens/PaymentModesScreen';
 
 const Stack = createStackNavigator();
 
@@ -98,6 +99,11 @@ function Routes() {
                     name="AnsweredQuestionsScreen"
                     component={AnsweredQuestionsScreen}
                     options={{ title: 'Dúvidas frequentes' }}
+                />
+                <Stack.Screen
+                    name="PaymentModesScreen"
+                    component={PaymentModesScreen}
+                    options={{ title: '' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>

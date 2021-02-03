@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as firebase from 'firebase';
 
 import env from '../../env';
 import OAuth from '../../model/OAuth';
@@ -16,6 +17,8 @@ import {
     UPDATE_EMAIL,
     UPDATE_EMAIL_ERROR, 
     PROFILE,
+    UPLOAD_PROFILE_IMAGE,
+    UPLOAD_PROFILE_IMAGE_ERROR,
     LOADING } from './actionTypes';
 import { formatBrToUs } from '../../utils/DateUtils';
 
@@ -167,4 +170,39 @@ export const sendConfirmCode = (action) => {
         }
     }
 
+}
+
+export const uploadProfileImage = (imageName, path) => {
+    return async dispatch => {
+
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+              resolve(xhr.response);
+            };
+            xhr.onerror = function(e) {
+              console.log(e);
+              reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', path, true);
+            xhr.send(null);
+        });
+
+        try {
+            await firebase.storage().ref().child(imageName).put(blob);
+            blob.close();
+            const url = await firebase.storage().ref(imageName).getDownloadURL();
+            // atualizar a url de imagem do usuário
+            return dispatch({
+                type: UPLOAD_PROFILE_IMAGE,
+                payload: url
+            });
+        } catch(e) {
+            return dispatch({
+                type: UPLOAD_PROFILE_IMAGE_ERROR,
+                payload: { message: 'Falha no upload da imagem' }
+            });
+        }
+    }
 }

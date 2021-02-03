@@ -13,6 +13,8 @@ import {
     UPDATE_EMAIL_ERROR,
     PROFILE,
     PROFILE_ERROR,
+    UPLOAD_PROFILE_IMAGE,
+    UPLOAD_PROFILE_IMAGE_ERROR,
     LOADING } from '../actions/actionTypes';
 
 const initialState = { profile: {} };
@@ -24,11 +26,15 @@ const user = (state = initialState, action) => {
         case LOGIN_ERROR:
             return { errors: { login: action.payload } };
         case PROFILE:
-            return { profile: action.payload, loading: false };
+            return { ...state, profile: action.payload, loading: false };
         case PROFILE_ERROR:
             return { errors: { profile: action.payload } };
         case SIGNUP_ERROR:
             return { errors: { signup: action.payload } };
+        case UPLOAD_PROFILE_IMAGE: 
+            return { ...state, profile: { ...state.profile, image: action.payload } };
+        case UPLOAD_PROFILE_IMAGE_ERROR: 
+            return { ...state, errors: { profile: action.payload } };
         case SIGNUP:
             return action.payload;
         case UPDATE_PASSWORD:
@@ -36,7 +42,7 @@ const user = (state = initialState, action) => {
         case UPDATE_PASSWORD_ERROR:
             return { errors: { updatePassword: action.payload } };
         case UPDATE_BASE_INFO:
-            return action.payload;
+            return { ...state, ...action.payload };
         case UPDATE_BASE_INFO_ERROR:
             return { errors: { updateBaseInfo: action.payload } };
         case SEND_CONFIRM_CODE:

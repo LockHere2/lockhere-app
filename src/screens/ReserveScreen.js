@@ -194,6 +194,7 @@ class ReserveScreen extends Component {
         <Card.Divider />
         <Text style={styles.cardText}>Endereço: {street}</Text>
         <Text style={styles.cardText}>Armário: {number}</Text>
+        { start_date ? <Text style={styles.cardText}>Inicio: {formatBrDateWithTime(start_date)}</Text> : null }
         { end_date ? <Text style={styles.cardText}>Termino: {formatBrDateWithTime(end_date)}</Text> : null }
         <NumberFormat textStyle={styles.cardText} value={price} />
         {finishButton}

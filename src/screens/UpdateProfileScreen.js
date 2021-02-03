@@ -3,9 +3,11 @@ import { View, StyleSheet } from 'react-native';
 import { Avatar, Accessory, Text } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
 import { connect } from 'react-redux';
+import * as ImagePicker from 'expo-image-picker';
 import * as Yup from "yup";
+import uuid from 'uuid';
 
-import { updatePassword, updateBaseInfo, sendConfirmCode, profile } from '../store/actions/user';
+import { updatePassword, updateBaseInfo, sendConfirmCode, profile, uploadProfileImage } from '../store/actions/user';
 import AccordionComponent from '../components/AccordionComponent';
 import Button from '../components/ButtonComponent';
 import Input from '../components/InputComponent';
@@ -68,7 +70,22 @@ class UpdateProfileScreen extends Component {
 
     onProfileImage() {
         const { profile } = this.props.user;
+        if (!profile) return require('../../assets/no-image.jpg');
         return profile.image ? { uri: profile.image } : require('../../assets/no-image.jpg')
+    }
+
+    async onShowImagePicker() {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+      
+        if (!result.cancelled) {
+            await this.props.uploadProfileImage(uuid.v4() + result.uri.substring(result.uri.lastIndexOf('.')), result.uri);
+        }
+        console.log(this.props.user.profile)
     }
 
     async onProcess(cb) {
@@ -79,15 +96,20 @@ class UpdateProfileScreen extends Component {
     }
 
     onUpdateBaseInfo(values) {
-        this.onProcess(() => this.props.updateBaseInfo(values));
+        this.onProcess(async () => { 
+            await this.props.updateBaseInfo(values); 
+            await this.props.profile();
+        });
     }
 
     async onUpdateEmail(values) {
+        this.setState({ isLoading: true });
         const { sendConfirmCode } = this.props;
 
         await sendConfirmCode('change_email');
 
         const { success } = this.props.user;
+        this.setState({ isLoading: false });
 
         if (success) this.props.navigation.navigate('ConfirmCodeScreen', { value: values.email, mode: 'email' });
     }
@@ -102,7 +124,7 @@ class UpdateProfileScreen extends Component {
             message="Sucesso"
             isVisible={this.state.success}
             onBackdropPress={() => this.setState({ success: false })}
-            onPress={() => this.setState({ success: false })}
+            onPress={() => { this.setState({ success: false }); }}
         />
     }
 
@@ -267,7 +289,7 @@ class UpdateProfileScreen extends Component {
         if (loading) {
             return <LoadingComponent />
         }
-        
+
         this.onLoadForms();
 
         return (
@@ -278,7 +300,8 @@ class UpdateProfileScreen extends Component {
                     rounded
                     imageProps={{ transition: false }}
                     containerStyle={styles.center}
-                    source={this.onProfileImage()}>
+                    source={this.onProfileImage()}
+                    onPress={() => this.onShowImagePicker()}>
                     <Accessory size={25} name='camera-alt' />
                 </Avatar>
                 <AccordionComponent
@@ -294,4 +317,4 @@ const mapStateToProps = (props) => {
     return props;
 }
 
-export default connect(mapStateToProps, { updatePassword, updateBaseInfo, sendConfirmCode, profile })(UpdateProfileScreen);
+export default connect(mapStateToProps, { updatePassword, updateBaseInfo, sendConfirmCode, profile, uploadProfileImage })(UpdateProfileScreen);

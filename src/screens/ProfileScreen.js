@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Avatar, Text } from 'react-native-elements';
 import { connect } from 'react-redux';
 
+import { profile } from '../store/actions/user';
 import Button from '../components/ButtonComponent';
 
 const styles = StyleSheet.create({
@@ -35,16 +36,32 @@ const styles = StyleSheet.create({
 
 class ProfileScreen extends Component {
 
+    componentDidMount() {
+        this.props.profile();
+    }
+
+    renderProfile() {
+        const { profile } = this.props.user;
+        if (!profile) return null;
+
+        const { name, image } = profile;
+        const source = image ? { uri: image } : require('../../assets/no-image.jpg')
+
+        return (
+            <View style={styles.avatarView}>
+                <Avatar 
+                    size="large" 
+                    rounded
+                    source={source} />
+                <Text h4 style={styles.avatarName}>{name}</Text>
+            </View>
+        );
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <View style={styles.avatarView}>
-                    <Avatar 
-                        size="large" 
-                        rounded
-                        source={{ uri: 'https://i.pinimg.com/originals/b0/fe/79/b0fe7968d609e092852ab455c2e7f116.jpg' }} />
-                    <Text h4 style={styles.avatarName}>Mateus Renato</Text>
-                </View>
+                {this.renderProfile()}
                 <View style={styles.buttonView}>
                     <Button
                         title='Meios de pagamento'
@@ -54,7 +71,7 @@ class ProfileScreen extends Component {
                             size: 30,
                             color: "white"
                         }}
-                        onPress={() => this.props.navigation.navigate('PaypalScreen')}
+                        onPress={() => this.props.navigation.navigate('PaymentModesScreen')}
                     />
                     <Button
                         title='Dúvidas frequentes'
@@ -98,4 +115,4 @@ const mapStateToProps = (props) => {
     return props;
 }
 
-export default connect(mapStateToProps, {})(ProfileScreen);
+export default connect(mapStateToProps, { profile })(ProfileScreen);
