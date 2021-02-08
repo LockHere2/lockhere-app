@@ -68,9 +68,15 @@ class ReserveScreen extends Component {
     this.onRefetchUserReservations();
   }
 
-  onRefetchUserReservations() {
+  onResetFilter() {
+    this.countReservations = 0;
+    this.filter.page = 1;
+  }
+
+  async onRefetchUserReservations() {
     this.props.cleanFetchReservations();
-    this.onFetchUserReservations();
+    this.onResetFilter();
+    await this.onFetchUserReservations();
   }
 
   async onFetchUserReservations() {
@@ -123,7 +129,7 @@ class ReserveScreen extends Component {
         containerStyle={styles.dropDownPicker}
         items={fields}
         defaultValue={this.filter.orderBy}
-        onChangeItem={(item) => { this.filter.page = 1; this.filter.orderBy = item.value; this.onRefetchUserReservations(); }} />
+        onChangeItem={(item) => { this.filter.orderBy = item.value; this.onRefetchUserReservations(); }} />
       <DropDownPicker
         label='Status'
         multiple
@@ -131,8 +137,8 @@ class ReserveScreen extends Component {
         containerStyle={styles.dropDownPicker}
         defaultValue={this.filter.status}
         items={ReserveStatusEnum.toArrayDropdown()}
-        onChangeItem={(status) => { this.filter.page = 1; this.filter.status = status; }}
-        onClose={() => this.onRefetchUserReservations()} />
+        onChangeItem={(status) => { this.filter.status = status; }}
+        onClose={() => { this.onRefetchUserReservations(); }} />
     </View>
   }
 
@@ -206,7 +212,8 @@ class ReserveScreen extends Component {
 
   render() {
     const { loading, reservations } = this.props.reserve;
-
+    console.log(this.props.reserve)
+    console.log(this.filter)
     //if (loading) {
     //  return <LoadingComponent />
     //}

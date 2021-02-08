@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { Avatar, Accessory, Text } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
 import { connect } from 'react-redux';
@@ -293,7 +293,7 @@ class UpdateProfileScreen extends Component {
         this.onLoadForms();
 
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 {this.renderPopup()}
                 <Avatar
                     size="large"
@@ -308,7 +308,7 @@ class UpdateProfileScreen extends Component {
                     containerStyle={styles.accordion}
                     sections={this.sections}
                 />
-            </View>
+            </ScrollView>
         )
     }
 }

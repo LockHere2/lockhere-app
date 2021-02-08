@@ -128,12 +128,12 @@ export const updateEmail = (email, code) => {
     }
 }
 
-export const updateBaseInfo = ({ name, cpf, born }) => {
+export const updateBaseInfo = ({ name, cpf, born, image }) => {
     born = formatBrToUs(born);
 
     return async dispatch => {
         try {
-            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/base_info`, { name, cpf, born }, { headers: OAuth.headers });
+            const { data } = await axios.patch(`${env.apiUrl}/users/user/update/base_info`, { name, cpf, born, image }, { headers: OAuth.headers });
 
             return dispatch({
                 type: UPDATE_BASE_INFO,
@@ -191,14 +191,16 @@ export const uploadProfileImage = (imageName, path) => {
 
         try {
             await firebase.storage().ref().child(imageName).put(blob);
-            blob.close();
+            await blob.close();
             const url = await firebase.storage().ref(imageName).getDownloadURL();
-            // atualizar a url de imagem do usuário
+            await axios.patch(`${env.apiUrl}/users/user/update/image`, { image: url }, { headers: OAuth.headers });
             return dispatch({
                 type: UPLOAD_PROFILE_IMAGE,
                 payload: url
             });
-        } catch(e) {
+        } catch(err) {
+            const { data } = err.response;
+            console.log(data);
             return dispatch({
                 type: UPLOAD_PROFILE_IMAGE_ERROR,
                 payload: { message: 'Falha no upload da imagem' }
