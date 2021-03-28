@@ -191,6 +191,8 @@ class ReserveScreen extends Component {
         onPress={() => this.onFinishReservation(id)} />;
     }
 
+    const statusText = ReserveStatusEnum.toArrayDropdown().find(s => s.value === status);
+
     return (
       <Card>
         <View style={styles.cardTitleView}>
@@ -198,6 +200,7 @@ class ReserveScreen extends Component {
           <Card.Title>{formatBrDateWithTime(start_date)}</Card.Title>
         </View>
         <Card.Divider />
+        <Text style={styles.cardText}>Status: {statusText.label}</Text>
         <Text style={styles.cardText}>Endereço: {street}</Text>
         <Text style={styles.cardText}>Armário: {number}</Text>
         { start_date ? <Text style={styles.cardText}>Inicio: {formatBrDateWithTime(start_date)}</Text> : null }

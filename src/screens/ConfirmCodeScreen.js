@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as Yup from "yup";
 
 import Button from '../components/ButtonComponent';
+import PopupComponent from '../components/PopupComponent';
 import Form from '../components/FormComponent';
 import Input from '../components/InputComponent';
 import { code } from '../validators/UserConstraints';
@@ -33,6 +34,10 @@ const styles = StyleSheet.create({
 const codeSchema = Yup.object().shape({ code });
 
 class ConfirmCodeScreen extends Component {
+
+  state = {
+    isVisible: false
+  }
   
   async onSubmit(values) {
     const { value, mode } = this.props.route.params;
@@ -40,7 +45,29 @@ class ConfirmCodeScreen extends Component {
 
     if (mode === 'email') await this.props.updateEmail(value, code);
 
-    this.props.navigation.navigate('Home');
+    if (!this.props.user.errors) {
+      if (this.props.route.params.cb) {
+        await this.props.route.params.cb();
+      } else {
+        this.props.navigation.navigate('Home'); 
+      }
+
+    }
+
+    this.setState({ isVisible: true });
+  }
+
+  popupErroMessage() {
+    const { isVisible } = this.state;
+    if (!isVisible) return null;
+    if (!this.props.user.errors) return null;
+
+    return (<PopupComponent
+      message={this.props.user.errors.email.message}
+      isVisible={isVisible}
+      onBackdropPress={() => this.setState({ isVisible: false })}
+      onPress={() => this.setState({ isVisible: false })}
+    />);
   }
 
   renderCodeForm(props) {
@@ -50,6 +77,7 @@ class ConfirmCodeScreen extends Component {
       <View style={styles.container}>
         <Text style={styles.text}>Insira o código enviado no email</Text>
         <Input
+            testID='confirm_code_input'
             placeholder='Insira o código'
             keyboardType='numeric'
             errorMessage={errors.code}
@@ -59,9 +87,11 @@ class ConfirmCodeScreen extends Component {
             onChangeText={text => props.setFieldValue('code', text)}
         />
         <Button 
+            testID='confirm_code_button'
             title='Confirmar'
             onPress={handleSubmit}
         />
+        {this.popupErroMessage()}
       </View>
     )
   }

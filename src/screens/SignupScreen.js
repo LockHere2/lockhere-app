@@ -162,7 +162,7 @@ class SignupScreen extends Component {
         validate={({ password, repassword }) => {
           const errors = {};
           if (password !== repassword) {
-            errors.message = 'Senhas não condizem';
+            errors.repassword = 'Senhas não condizem';
           }
 
           return errors;

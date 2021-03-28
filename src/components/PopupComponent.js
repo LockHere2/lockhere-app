@@ -23,7 +23,7 @@ export default ({ isVisible = false, message, onBackdropPress = () => { }, onPre
     return (
         <Overlay isVisible={isVisible} onBackdropPress={onBackdropPress}>
             <View style={styles.view}>
-                <Text style={styles.text} >{message}</Text>
+                <Text testID='popup_text_message' style={styles.text} >{message}</Text>
                 <Divider style={styles.divider} />
                 <Button buttonStyle={styles.button} title="OK" onPress={onPress} />
             </View>

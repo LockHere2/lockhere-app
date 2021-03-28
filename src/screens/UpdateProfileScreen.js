@@ -111,7 +111,13 @@ class UpdateProfileScreen extends Component {
         const { success } = this.props.user;
         this.setState({ isLoading: false });
 
-        if (success) this.props.navigation.navigate('ConfirmCodeScreen', { value: values.email, mode: 'email' });
+        const cb = async function() {
+            this.props.navigation.navigate('UpdateProfileScreen');
+            this.setState({ success: true });
+            await this.props.profile();
+        }
+
+        if (success) this.props.navigation.navigate('ConfirmCodeScreen', { value: values.email, mode: 'email', cb: cb.bind(this) });
     }
 
     onUpdatePassword(values) {
